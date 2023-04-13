@@ -1,0 +1,1 @@
+cap.get(cv2.CAP_PROP_FRAME_HEIGHT)

@@ -1,5 +1,5 @@
 # TensorFlow is required for Keras to work
-from tensorflow.keras.models import load_model
+from keras.models import load_model  # TensorFlow is required for Keras to work
 import numpy as np
 import cv2
 
@@ -23,9 +23,11 @@ def main():
     while True:
         # Capture frame-by-frame
         ret, frame = cap.read()
+        frame = frame[0:224, 0:224]
 
         # Resize the raw image into (224-height,224-width) pixels
-        frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
+        #frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
+
         # if frame is read correctly ret is True
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
@@ -38,13 +40,14 @@ def main():
         cv2.imshow('frame', color)
 
         # Make the image a numpy array and reshape it to the models input shape.
-        image = np.asarray(image, dtype=np.float32).reshape(1, 224, 224, 3)
+        frame = np.asarray(frame, dtype=np.float32).reshape(
+            1, 224, 224, 3)
 
         # Normalize the image array
-        image = (image / 127.5) - 1
+        frame = (frame / 127.5) - 1
 
         # Predicts the model
-        prediction = model.predict(image)
+        prediction = model.predict(frame)
         index = np.argmax(prediction)
         class_name = class_names[index]
         confidence_score = prediction[0][index]
