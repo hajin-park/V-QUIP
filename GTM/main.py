@@ -9,10 +9,10 @@ def main():
     np.set_printoptions(suppress=True)
 
     # Load the model
-    model = load_model("keras_Model.h5", compile=False)
+    model = load_model("model/keras_Model.h5", compile=False)
 
     # Load the labels
-    class_names = open("labels.txt", "r").readlines()
+    class_names = open("model/labels.txt", "r").readlines()
 
     cap = cv2.VideoCapture(0)
 
@@ -23,10 +23,9 @@ def main():
     while True:
         # Capture frame-by-frame
         ret, frame = cap.read()
-        frame = frame[0:224, 0:224]
 
         # Resize the raw image into (224-height,224-width) pixels
-        #frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
+        frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
 
         # if frame is read correctly ret is True
         if not ret:
