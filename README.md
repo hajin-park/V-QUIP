@@ -1,2 +1,2 @@
-# ASL-Transcriber
-exploreCSR Computer Vision Group
+# exploreCSR Computer Vision Research Group
+Live American Sign Language Recognition Research
