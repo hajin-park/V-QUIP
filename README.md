@@ -1,2 +1,2 @@
-# exploreCSR Computer Vision Research Group
-Live American Sign Language Recognition Research
+# Google ExploreCSR Image Classification Research Group
+ASL Transcription Using Computer Vision For Online Communication
