@@ -78,7 +78,7 @@ const MediaForm = ({ setPollingMedia }) => {
                                                 name="file-upload"
                                                 type="file"
                                                 className="sr-only"
-                                                accept="image/png, image/jpeg, video/mp4"
+                                                accept="image/png, image/jpeg, image/webp, video/mp4, video/webm"
                                                 onChange={(e) => {
                                                     setCurrentMedia(
                                                         e.target.files[0]

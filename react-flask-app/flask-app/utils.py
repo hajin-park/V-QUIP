@@ -1,3 +1,5 @@
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
 from matplotlib import pyplot as plt
 from mediapipe.framework.formats import landmark_pb2
 import mediapipe as mp
@@ -20,6 +22,9 @@ plt.rcParams.update(
     }
 )
 
+base_options = python.BaseOptions(model_asset_path="models/gesture_recognizer.task")
+options = vision.GestureRecognizerOptions(base_options=base_options)
+recognizer = vision.GestureRecognizer.create_from_options(options)
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -45,9 +50,26 @@ def annotate_gesture_and_hand_landmark(image, top_gesture, hand_landmarks):
         mp_drawing_styles.get_default_hand_connections_style(),
     )
 
-    annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
-    annotated_image = cv2.putText(
-        annotated_image, title, (50, 50), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 2, cv2.LINE_AA
+    annotated_image_rgb = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
+    annotated_image_rgb = cv2.putText(
+        annotated_image_rgb, title, (50, 50), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 2, cv2.LINE_AA
     )
 
-    return annotated_image
+    return annotated_image_rgb
+
+
+def recognize_gesture(frame):
+    # STEP 3: Load the input image.
+    image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
+
+    # STEP 4: Recognize gestures in the input image.
+    recognition_result = recognizer.recognize(image)
+
+    if not recognition_result.gestures:
+        return None, None
+
+    # STEP 5: Process the result. In this case, visualize it.
+    top_gesture = recognition_result.gestures[0][0]
+    hand_landmarks = recognition_result.hand_landmarks
+
+    return [top_gesture, hand_landmarks]
