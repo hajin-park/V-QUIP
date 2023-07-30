@@ -25,7 +25,7 @@ RECORDING_FILE_ID = ""
 app = Flask(__name__)
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["POST"])
 def predict_img():
     if request.method == "POST":
         if "file" in request.files:
