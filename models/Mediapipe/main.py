@@ -1,55 +1,74 @@
-import cv2
-import numpy as np
+from utils import annotate_gesture_and_hand_landmark
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
 import mediapipe as mp
-import tensorflow as tf
-from tensorflow.keras.models import load_model
+import cv2
+import math
 
-mpHands = mp.solutions.hands
-hands = mpHands.Hands(max_num_hands=1, min_detection_confidence=0.7)
-mpDraw = mp.solutions.drawing_utils
 
-model = load_model('mp_hand_gesture')
-f = open('gesture.names', 'r')
-classNames = f.read().split('\n')
-f.close()
-print(classNames)
+DESIRED_HEIGHT = 480
+DESIRED_WIDTH = 480
+IMAGE_FILENAMES = ["models/Mediapipe/mp_test_1.png", "models/Mediapipe/mp_test_2.png"]
 
-cap = cv2.VideoCapture(0)
 
-while True:
-    # Read each frame from the webcam
-    _, frame = cap.read()
-    x , y, c = frame.shape
+base_options = python.BaseOptions(model_asset_path="models/Mediapipe/models/gesture_recognizer.task")
+options = vision.GestureRecognizerOptions(base_options=base_options)
+recognizer = vision.GestureRecognizer.create_from_options(options)
 
-    # Flip the frame vertically
-    frame = cv2.flip(frame, 1)
-    # Show the final output
-    cv2.imshow("Output", frame)
-    if cv2.waitKey(1) == ord('q'):
-        break
 
-# release the webcam and destroy all active windows
-cap.release()
-cv2.destroyAllWindows()
+def resize_and_show(image):
+    h, w = image.shape[:2]
+    if h < w:
+        img = cv2.resize(image, (DESIRED_WIDTH, math.floor(h / (w / DESIRED_WIDTH))))
+    else:
+        img = cv2.resize(image, (math.floor(w / (h / DESIRED_HEIGHT)), DESIRED_HEIGHT))
+    return img
 
-framergb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-result = hands.process(framergb)
-className = ''
 
-# post process the result
-if result.multi_hand_landmarks:
-        landmarks = []
-        for handslms in result.multi_hand_landmarks:
-            for lm in handslms.landmark:
-                lmx = int(lm.x * x)
-                lmy = int(lm.y * y)
-                landmarks.append([lmx, lmy])
-                mpDraw.draw_landmarks(frame, handslms, mpHands.HAND_CONNECTIONS)
+def recognize_gesture(frame):
+    # STEP 3: Load the input image.
+    image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
 
-prediction = model.predict([landmarks])
-classID = np.argmax(prediction)
-className = classNames[classID]
+    # STEP 4: Recognize gestures in the input image.
+    recognition_result = recognizer.recognize(image)
 
-# show the prediction on the frame
-cv2.putText(frame, className, (10, 50), cv2.FONT_HERSHEY_SIMPLEX,
-            1, (0,0,255), 2, cv2.LINE_AA)
+    if not recognition_result.gestures:
+        return None, None
+
+    # STEP 5: Process the result. In this case, visualize it.
+    top_gesture = recognition_result.gestures[0][0]
+    hand_landmarks = recognition_result.hand_landmarks
+
+    return [top_gesture, hand_landmarks]
+
+
+def run():
+    cap = cv2.VideoCapture(0)
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+
+        if ret:
+            # Flip on horizontal
+            flipped_frame = cv2.flip(frame, 1)
+
+            top_gesture, hand_landmarks = recognize_gesture(flipped_frame)
+
+            if top_gesture == None:
+                cv2.imshow("Mediapipe Gesture Recognition", flipped_frame)
+            else:
+                annotated_frame = annotate_gesture_and_hand_landmark(flipped_frame, top_gesture, hand_landmarks)
+                cv2.imshow("Mediapipe Gesture Recognition", annotated_frame)
+
+            if cv2.waitKey(1) == ord("q"):
+                break
+
+        else:
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    run()

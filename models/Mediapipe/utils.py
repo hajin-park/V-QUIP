@@ -1,65 +1,54 @@
-import numpy as np
-import itertools
+from matplotlib import pyplot as plt
+from mediapipe.framework.formats import landmark_pb2
+import mediapipe as mp
+import math
 import cv2
-import copy
+
+plt.rcParams.update(
+    {
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+        "axes.spines.left": False,
+        "axes.spines.bottom": False,
+        "xtick.labelbottom": False,
+        "xtick.bottom": False,
+        "ytick.labelleft": False,
+        "ytick.left": False,
+        "xtick.labeltop": False,
+        "xtick.top": False,
+        "ytick.labelright": False,
+        "ytick.right": False,
+    }
+)
+
+mp_hands = mp.solutions.hands
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
 
 
-def calc_bounding_rect(image, landmarks):
-    image_width, image_height = image.shape[1], image.shape[0]
+def annotate_gesture_and_hand_landmark(image, top_gesture, hand_landmarks):
+    """Annotates a frame with the gesture category and its score along with the hand landmarks."""
 
-    landmark_array = np.empty((0, 2), int)
+    title = f"{top_gesture.category_name} ({top_gesture.score:.2f})"
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    annotated_image = image.copy()
 
-    for _, landmark in enumerate(landmarks.landmark):
-        landmark_x = min(int(landmark.x * image_width), image_width - 1)
-        landmark_y = min(int(landmark.y * image_height), image_height - 1)
+    hand_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
+    hand_landmarks_proto.landmark.extend(
+        [landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y, z=landmark.z) for landmark in hand_landmarks[0]]
+    )
 
-        landmark_point = [np.array((landmark_x, landmark_y))]
+    mp_drawing.draw_landmarks(
+        annotated_image,
+        hand_landmarks_proto,
+        mp_hands.HAND_CONNECTIONS,
+        mp_drawing_styles.get_default_hand_landmarks_style(),
+        mp_drawing_styles.get_default_hand_connections_style(),
+    )
 
-        landmark_array = np.append(landmark_array, landmark_point, axis=0)
+    annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
+    annotated_image = cv2.putText(
+        annotated_image, title, (50, 50), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 2, cv2.LINE_AA
+    )
 
-    x, y, w, h = cv2.boundingRect(landmark_array)
-
-    return [x, y, x + w, y + h]
-
-
-def calc_landmark_list(image, landmarks):
-    image_width, image_height = image.shape[1], image.shape[0]
-
-    landmark_point = []
-
-    # Keypoint
-    for _, landmark in enumerate(landmarks.landmark):
-        landmark_x = min(int(landmark.x * image_width), image_width - 1)
-        landmark_y = min(int(landmark.y * image_height), image_height - 1)
-        # landmark_z = landmark.z
-
-        landmark_point.append([landmark_x, landmark_y])
-
-    return landmark_point
-
-
-def pre_process_landmark(landmark_list):
-    temp_landmark_list = copy.deepcopy(landmark_list)
-
-    # Convert to relative coordinates
-    base_x, base_y = 0, 0
-    for index, landmark_point in enumerate(temp_landmark_list):
-        if index == 0:
-            base_x, base_y = landmark_point[0], landmark_point[1]
-
-        temp_landmark_list[index][0] = temp_landmark_list[index][0] - base_x
-        temp_landmark_list[index][1] = temp_landmark_list[index][1] - base_y
-
-    # Convert to a one-dimensional list
-    temp_landmark_list = list(
-        itertools.chain.from_iterable(temp_landmark_list))
-
-    # Normalization
-    max_value = max(list(map(abs, temp_landmark_list)))
-
-    def normalize_(n):
-        return n / max_value
-
-    temp_landmark_list = list(map(normalize_, temp_landmark_list))
-
-    return temp_landmark_list
+    return annotated_image
