@@ -1,71 +1,59 @@
-from flask import Flask, Response, request
-from subprocess import Popen
 from ultralytics import YOLO
-from PIL import Image
-from re import DEBUG, sub
-import numpy as np
-import tensorflow as tf
-import torch
-import datetime
+from flask import Flask, Response, request
+from flask_cors import CORS, cross_origin
+from ultralytics import YOLO
 import argparse
-import io
-import subprocess
-import requests
-import shutil
 import cv2
-import glob
-import time
-import os
-import re
 
-IMG_UPLOAD_ID = "img_file"
-VIDEO_UPLOAD_ID = ""
-RECORDING_FILE_ID = ""
 
+model = YOLO(r"models/best.pt")
 app = Flask(__name__)
+CORS(app, support_credentials=True)
+image_extensions = ["png", "jpg", "webp"]
+video_extensions = ["mp4", "webm"]
 
 
-@app.route("/", methods=["POST"])
+@app.route("/inference", methods=["PUT"])
+@cross_origin(supports_credentials=True)
 def predict_img():
-    if request.method == "POST":
-        if "file" in request.files:
-            # Retrieve the file from the HTML component specified by its name-ID
-            with request.files[IMG_UPLOAD_ID] as f:
-                basepath = os.path.dirname(__file__)
-                filepath = os.path.join(basepath, "uploads", f.filename)
-                f.save(filepath)
-                global imgpath
-                predict_img.imgpath = f.filename
-                file_extension = f.filename.rsplit(".", 1)[1].lower()
+    if request.method == "PUT":
+        if request.files["file"]:
+            file = request.files["file"]
+            file_extension = file.filename.rsplit(".", 1)[1].lower()
 
-                if file_extension == "jpg":
-                    pass
+            if file_extension in image_extensions:
+                file.save("media.webp")
+                image = cv2.imread(file.filename)
+                result = model.predict(image, save=False)
+                cv2.imwrite("output.jpg", result[0].plot())
 
-                if file_extension == "mp4":
-                    pass
+            elif file_extension in video_extensions:
+                # Prepare OpenCV to create a new output MP4 file
+                file.save("media.mp4")
+                cap = cv2.VideoCapture("media.mp4")
+                frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+                out = cv2.VideoWriter("output.mp4", fourcc, 30.0, (frame_width, frame_height))
 
-    if request.method == "GET":
+                # Annotate the video frame by frame
+                while cap.isOpened():
+                    ret, frame = cap.read()
+                    if not ret:
+                        break
+
+                    results = model(frame, save=False)
+                    results_plotted = results[0].plot()
+                    out.write(results_plotted)
+
+    elif request.method == "GET":
         pass
 
-
-@app.route("/<path:filename>")
-def display(filename):
-    pass
-
-
-def get_frame():
-    pass
-
-
-@app.route("/video_feed")
-def video_feed():
-    pass
+    response = Response("Inference Successful")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ExploreCSR Demo App")
-    parser.add_argument("--port", default=5000, type=int, help="port number")
-    args = parser.parse_args()
-    model = torch.hub.load(".", "custom", "best_246.pt", source="local")
-    model.eval()
-    app.run(host="0.0.0.0", port=args.port)  # debug=True causes Restarting with stat
+    app.run(host="0.0.0.0", port=5000)
