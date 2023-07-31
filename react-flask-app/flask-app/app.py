@@ -19,6 +19,9 @@ video_extensions = ["mp4", "webm"]
 @cross_origin(supports_credentials=True)
 def inference():
     if request.method == "PUT":
+        [
+            f.unlink() for f in Path("outputs").glob("*") if f.is_file()
+        ]  # clear outputs folder for each new inference request
         if request.files["file"]:
             file = request.files["file"]
             file_extension = file.filename.rsplit(".", 1)[1].lower()
@@ -26,43 +29,55 @@ def inference():
             #   Process image file
             if file_extension in image_extensions:
                 file.save(f"media.{file_extension}")
-                image = cv2.imread(f"media.{file_extension}")
-                results = model.predict(image, save=False)
-                pose_annotations = results[0].plot()
+                image = cv2.imread(f"media.{file_extension}")  # returns a BGR image
+                results = model.predict(
+                    image, save=False
+                )  # results is an array, each item corresponds to each file passed in or each frame of a video
+                pose_annotations = results[0].plot()  # .plot() returns an annotated image
                 height, width = image.shape[:2]
 
-                for i, keypoints in enumerate(results[0].keypoints.cpu().numpy()):
+                # each loop represents one person (i.e. three people detected, three loops)
+                for i, keypoints in enumerate(
+                    results[0].keypoints.cpu().numpy()
+                ):  # .keypoints returns a Tensor matrix of keypoints, use .cpu().numpy() to convert it
+                    # keypoints has 17 objects, one for each landmark
                     ear_left = keypoints[3]
                     ear_right = keypoints[4]
                     shoulder_left = keypoints[5]
                     shoulder_right = keypoints[6]
                     wrist_left = keypoints[9]
                     wrist_right = keypoints[10]
-                    hand_crop = ear_left[0] - ear_right[0]
+                    hand_crop = (
+                        ear_left[0] - ear_right[0]
+                    )  # hand crop dimensions are relative to the size of the person's face
 
-                for j, wrist_data in enumerate([wrist_left, wrist_right]):
-                    x, y, confidence = wrist_data
-                    hand_raised = y < ((shoulder_left[1] + shoulder_right[1]) / 2) + (hand_crop / 2)
-                    if confidence > GESTURE_THRESHOLD and hand_raised:
-                        x_upper, y_upper, x_lower, y_lower = gesture_crop_dimensions(x, y, hand_crop, width, height)
-                        wrist_cropped = image.copy()[
-                            y_upper:y_lower,
-                            x_upper:x_lower,
-                        ]
-                        wrist_cropped_rgb = cv2.cvtColor(wrist_cropped, cv2.COLOR_BGR2RGB)
-                        top_gesture, hand_landmarks = recognize_gesture(wrist_cropped_rgb)
-                        if top_gesture != None:
+                    for j, wrist_data in enumerate([wrist_left, wrist_right]):
+                        x, y, confidence = wrist_data
+                        hand_raised = y < ((shoulder_left[1] + shoulder_right[1]) / 2) + (hand_crop / 2)
+
+                        # process hand if the confidence is high enough and the arm/hand position is "raised" (around or above the shoulder-line)
+                        if confidence > GESTURE_THRESHOLD and hand_raised:
+                            x_upper, y_upper, x_lower, y_lower = gesture_crop_dimensions(x, y, hand_crop, width, height)
+                            wrist_cropped = image.copy()[
+                                y_upper:y_lower,
+                                x_upper:x_lower,
+                            ]
                             wrist_cropped_rgb = cv2.cvtColor(
-                                annotate_gesture_and_hand_landmark(wrist_cropped_rgb, top_gesture, hand_landmarks),
-                                cv2.COLOR_BGR2RGB,
-                            )
-                            cv2.imwrite(f"outputs/person{i}_gesture{j}.jpg", wrist_cropped_rgb)
+                                wrist_cropped, cv2.COLOR_BGR2RGB
+                            )  # Mediapipe only accepts RGB images, cv2 returns BGR image so we must convert it here
+                            top_gesture, hand_landmarks = recognize_gesture(wrist_cropped_rgb)
+                            if top_gesture != None:
+                                wrist_cropped_rgb = cv2.cvtColor(
+                                    annotate_gesture_and_hand_landmark(wrist_cropped_rgb, top_gesture, hand_landmarks),
+                                    cv2.COLOR_BGR2RGB,
+                                )  # Mediapipe returns a BGR image, convert it back into RGB
+                                cv2.imwrite(f"outputs/person{i}_gesture{j}.jpg", wrist_cropped_rgb)
 
                 cv2.imwrite("outputs/output.jpg", pose_annotations)
 
             #   Process video file
             elif file_extension in video_extensions:
-                # Prepare OpenCV to create a new output MP4 file
+                # Prepare OpenCV VideoWriter to create a new output MP4 file
                 file.save("media.mp4")
                 cap = cv2.VideoCapture("media.mp4")
                 frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
