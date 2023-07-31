@@ -73,3 +73,12 @@ def recognize_gesture(frame):
     hand_landmarks = recognition_result.hand_landmarks
 
     return [top_gesture, hand_landmarks]
+
+
+def gesture_crop_dimensions(x, y, hand_crop, width, height):
+    x_upper = int(x - hand_crop / 1.5) if int(x - hand_crop / 1.5) > 0 else 0
+    y_upper = int(y - hand_crop * 1.5) if int(y - hand_crop * 1.5) > 0 else 0
+    x_lower = int(x + hand_crop / 1.5) if int(x + hand_crop / 1.5) < width else width
+    y_lower = int(y + hand_crop / 3) if int(y + hand_crop / 3) < height else height
+
+    return x_upper, y_upper, x_lower, y_lower

@@ -13,6 +13,7 @@ const WebcamForm = ({ setPollingMedia }) => {
     const [recordedChunks, setRecordedChunks] = useState([]);
     const [recordingURL, setRecordingURL] = useState(null);
 
+    // MediaPlayer API webcam recording
     const handleDataAvailable = useCallback(
         ({ data }) => {
             if (data.size > 0) {
@@ -113,12 +114,15 @@ const WebcamForm = ({ setPollingMedia }) => {
                 setPollingMedia(URL.createObjectURL(myBlob));
             } catch (error) {
                 console.error(
-                    "There has been a problem with your fetch operation:",
+                    "There has been a problem with your GET operation: ",
                     error
                 );
             }
         } catch (e) {
-            console.log(e);
+            console.error(
+                "There has been a problem with your PUT operation: ",
+                error
+            );
         }
     };
 
@@ -132,22 +136,27 @@ const WebcamForm = ({ setPollingMedia }) => {
                             type="button"
                             className="relative inline-flex items-center rounded-l-md bg-white hover:bg-gray-50 px-3 py-2 text-lg font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-10"
                         >
-                            Stop Polling
+                            Stop Poll
                         </button>
                     ) : (
                         <button
                             onClick={handleStartCaptureClick}
+                            disabled={screenshot || capturing || recordingURL}
                             type="button"
-                            className="relative inline-flex items-center rounded-l-md bg-white hover:bg-gray-50 px-3 py-2 text-lg font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-10"
+                            className={`relative inline-flex items-center rounded-l-md ${
+                                screenshot || capturing || recordingURL
+                                    ? "bg-gray-300"
+                                    : "bg-white hover:bg-gray-50"
+                            }  px-3 py-2 text-lg font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-10`}
                         >
-                            Start
+                            Start Poll
                         </button>
                     )}
 
                     <button
                         onClick={handleRetakePollingClick}
                         type="button"
-                        className={`relative -ml-px inline-flex items-center ${
+                        className={`relative -ml-px inline-flex items-center rounded-r-md ${
                             recordingURL
                                 ? "bg-white hover:bg-gray-50"
                                 : "bg-gray-300"
@@ -160,8 +169,9 @@ const WebcamForm = ({ setPollingMedia }) => {
                     <button
                         onClick={handleTakePhoto}
                         type="button"
+                        disabled={capturing || recordingURL}
                         className={`relative inline-flex items-center rounded-l-md ${
-                            screenshot
+                            screenshot || capturing || recordingURL
                                 ? "bg-gray-300"
                                 : "bg-white hover:bg-gray-50"
                         } px-3 py-2 text-lg font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-10`}

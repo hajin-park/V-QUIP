@@ -4,7 +4,7 @@ import { PhotoIcon } from "@heroicons/react/24/solid";
 const MediaForm = ({ setPollingMedia }) => {
     const [currentMedia, setCurrentMedia] = useState(null);
 
-    const handleMediaSubmit = async () => {
+    const handleMediaSubmit = async (e) => {
         let form = new FormData();
         form.append("file", currentMedia);
         try {
@@ -56,7 +56,7 @@ const MediaForm = ({ setPollingMedia }) => {
                             htmlFor="cover-photo"
                             className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                            Only PNG, JPG, or MP4 accepted
+                            Only PNG, JPG, WEBP, MP4, or WEBM accepted
                         </label>
                         {currentMedia ? (
                             currentMedia.name
