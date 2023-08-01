@@ -41,12 +41,12 @@ def inference():
                     results[0].keypoints.cpu().numpy()
                 ):  # .keypoints returns a Tensor matrix of keypoints, use .cpu().numpy() to convert it
                     # keypoints has 17 objects, one for each landmark
-                    ear_left = keypoints[3]
-                    ear_right = keypoints[4]
-                    shoulder_left = keypoints[5]
-                    shoulder_right = keypoints[6]
-                    wrist_left = keypoints[9]
-                    wrist_right = keypoints[10]
+                    ear_left = keypoints.data[0][3]
+                    ear_right = keypoints.data[0][4]
+                    shoulder_left = keypoints.data[0][5]
+                    shoulder_right = keypoints.data[0][6]
+                    wrist_left = keypoints.data[0][9]
+                    wrist_right = keypoints.data[0][10]
                     hand_crop = (
                         ear_left[0] - ear_right[0]
                     )  # hand crop dimensions are relative to the size of the person's face
@@ -102,12 +102,12 @@ def inference():
                         results[0].keypoints.cpu().numpy()
                     ):  # .keypoints returns a Tensor matrix of keypoints, use .cpu().numpy() to convert it
                         # keypoints has 17 objects, one for each landmark
-                        ear_left = keypoints[3]
-                        ear_right = keypoints[4]
-                        shoulder_left = keypoints[5]
-                        shoulder_right = keypoints[6]
-                        wrist_left = keypoints[9]
-                        wrist_right = keypoints[10]
+                        ear_left = keypoints.data[0][3]
+                        ear_right = keypoints.data[0][4]
+                        shoulder_left = keypoints.data[0][5]
+                        shoulder_right = keypoints.data[0][6]
+                        wrist_left = keypoints.data[0][9]
+                        wrist_right = keypoints.data[0][10]
                         hand_crop = (
                             ear_left[0] - ear_right[0]
                         )  # hand crop dimensions are relative to the size of the person's face
@@ -129,7 +129,7 @@ def inference():
                                 wrist_cropped, cv2.COLOR_BGR2RGB
                             )  # Mediapipe only accepts RGB images, cv2 returns BGR image so we must convert it here
                             top_gesture, hand_landmarks = recognize_gesture(wrist_cropped_rgb)
-                            if top_gesture != None:
+                            if top_gesture != None and top_gesture.category_name != "None":
                                 wrist_cropped_rgb = cv2.cvtColor(
                                     annotate_gesture_and_hand_landmark(wrist_cropped_rgb, top_gesture, hand_landmarks),
                                     cv2.COLOR_BGR2RGB,
@@ -137,11 +137,11 @@ def inference():
                                 current_gesture = best_gestures.setdefault(
                                     f"person{i}_gesture{j}", [wrist_cropped_rgb, top_gesture.score]
                                 )
-                                if current_gesture[1] < top_gesture.score and top_gesture.category_name != "None":
+                                if current_gesture[1] < top_gesture.score:
                                     best_gestures[f"person{i}_gesture{j}"] = [wrist_cropped_rgb, top_gesture.score]
 
                 for key, value in best_gestures.items():
-                    if value[0]:
+                    if value[0].any():
                         cv2.imwrite(f"outputs/{key}.jpg", value[0])
 
     elif request.method == "GET":
