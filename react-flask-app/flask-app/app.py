@@ -137,11 +137,12 @@ def inference():
                                 current_gesture = best_gestures.setdefault(
                                     f"person{i}_gesture{j}", [wrist_cropped_rgb, top_gesture.score]
                                 )
-                                if current_gesture[1] < top_gesture.score:
+                                if current_gesture[1] < top_gesture.score and top_gesture.category_name != "None":
                                     best_gestures[f"person{i}_gesture{j}"] = [wrist_cropped_rgb, top_gesture.score]
 
                 for key, value in best_gestures.items():
-                    cv2.imwrite(f"outputs/{key}.jpg", value[0])
+                    if value[0]:
+                        cv2.imwrite(f"outputs/{key}.jpg", value[0])
 
     elif request.method == "GET":
         pass
