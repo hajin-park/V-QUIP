@@ -96,7 +96,7 @@ const WebcamForm = ({ setPollingMedia }) => {
         console.log(file);
         form.append("file", file);
         try {
-            response = await fetch("http://127.0.0.1:5000/inference", {
+            const response = await fetch("http://127.0.0.1:5000/inference", {
                 method: "PUT",
                 body: form,
             });
@@ -118,7 +118,7 @@ const WebcamForm = ({ setPollingMedia }) => {
                     error
                 );
             }
-        } catch (e) {
+        } catch (error) {
             console.error(
                 "There has been a problem with your PUT operation: ",
                 error

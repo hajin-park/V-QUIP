@@ -8,7 +8,7 @@ const MediaForm = ({ setPollingMedia }) => {
         let form = new FormData();
         form.append("file", currentMedia);
         try {
-            response = await fetch("http://127.0.0.1:5000/inference", {
+            const response = await fetch("http://127.0.0.1:5000/inference", {
                 method: "PUT",
                 body: form,
             });
@@ -26,12 +26,15 @@ const MediaForm = ({ setPollingMedia }) => {
                 setPollingMedia(URL.createObjectURL(myBlob));
             } catch (error) {
                 console.error(
-                    "There has been a problem with your fetch operation:",
+                    "There has been a problem with your GET operation:",
                     error
                 );
             }
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            console.error(
+                "There has been a problem with your PUT operation:",
+                error
+            );
         }
     };
 

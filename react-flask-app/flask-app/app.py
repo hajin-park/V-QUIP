@@ -144,12 +144,12 @@ def inference():
                     if value[0].any():
                         cv2.imwrite(f"outputs/{key}.jpg", value[0])
 
-    elif request.method == "GET":
-        pass
+        response = Response("200")
+        return response
 
-    response = Response("Inference Successful")
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+    elif request.method == "GET":
+        response = Response("200")
+        return response
 
 
 if __name__ == "__main__":
