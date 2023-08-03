@@ -22,8 +22,8 @@ const MediaForm = ({ setPollingMedia }) => {
                 if (!response.ok) {
                     throw new Error("Network response was not OK");
                 }
-                const myBlob = await response.blob();
-                setPollingMedia(URL.createObjectURL(myBlob));
+                let text = await response.text();
+                setPollingMedia(JSON.parse(text));
             } catch (error) {
                 console.error(
                     "There has been a problem with your GET operation:",

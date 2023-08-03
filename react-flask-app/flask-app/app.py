@@ -3,6 +3,11 @@ from pathlib import Path
 from ultralytics import YOLO
 from flask import Flask, Response, request
 from flask_cors import CORS, cross_origin
+from base64 import b64encode
+from PIL import Image
+import numpy as np
+import io
+import json
 import argparse
 import cv2
 
@@ -19,6 +24,14 @@ video_extensions = ["mp4", "webm"]
 @cross_origin(supports_credentials=True)
 def inference():
     if request.method == "PUT":
+        poll_data = {
+            "people_detected": {
+                "count": 0,
+                "media": "",
+            },
+            "gestures_detected": {"count": 0, "media": [], "gestures": {}},
+        }
+
         [
             f.unlink() for f in Path("outputs").glob("*") if f.is_file()
         ]  # clear outputs folder for each new inference request
@@ -35,6 +48,7 @@ def inference():
                 )  # results is an array, each item corresponds to each file passed in or each frame of a video
                 pose_annotations = results[0].plot()  # .plot() returns an annotated image
                 height, width = image.shape[:2]
+                poll_data["people_detected"]["media"] = pose_annotations
 
                 # each loop represents one person detected (i.e. three people detected, three loops)
                 for i, keypoints in enumerate(
@@ -50,6 +64,7 @@ def inference():
                     hand_crop = (
                         ear_left[0] - ear_right[0]
                     )  # hand crop dimensions are relative to the size of the person's face
+                    poll_data["people_detected"]["count"] += 1
 
                     for j, wrist_data in enumerate([wrist_left, wrist_right]):
                         x, y, confidence = wrist_data
@@ -72,8 +87,17 @@ def inference():
                                     cv2.COLOR_BGR2RGB,
                                 )  # Mediapipe returns a BGR image, convert it back into RGB
                                 cv2.imwrite(f"outputs/person{i}_gesture{j}.jpg", wrist_cropped_rgb)
+                                poll_data["gestures_detected"]["count"] += 1
+                                poll_data["gestures_detected"]["media"].append(wrist_cropped_rgb)
+                                poll_data["gestures_detected"]["gestures"].setdefault(top_gesture.category_name, 0)
+                                poll_data["gestures_detected"]["gestures"][top_gesture.category_name] += 1
 
                 cv2.imwrite("outputs/output.jpg", pose_annotations)
+                img_byte_arr = io.BytesIO()
+                pose_img = Image.fromarray(poll_data["people_detected"]["media"].astype("uint8"), "RGB")
+                pose_img.save(img_byte_arr, format="JPEG")
+                base64_image = b64encode(img_byte_arr.getvalue()).decode("utf-8")
+                poll_data["people_detected"]["media"] = base64_image
 
             #   Process video file
             elif file_extension in video_extensions:
@@ -96,6 +120,7 @@ def inference():
                     results = model(frame, save=False)
                     results_plotted = results[0].plot()
                     out.write(results_plotted)
+                    poll_data["people_detected"]["count"] = 0
 
                     # each loop represents one person detected (i.e. three people detected, three loops)
                     for i, keypoints in enumerate(
@@ -111,6 +136,7 @@ def inference():
                         hand_crop = (
                             ear_left[0] - ear_right[0]
                         )  # hand crop dimensions are relative to the size of the person's face
+                        poll_data["people_detected"]["count"] += 1
 
                     for j, wrist_data in enumerate([wrist_left, wrist_right]):
                         x, y, confidence = wrist_data
@@ -135,23 +161,46 @@ def inference():
                                     cv2.COLOR_BGR2RGB,
                                 )  # Mediapipe returns a BGR image, convert it back into RGB
                                 current_gesture = best_gestures.setdefault(
-                                    f"person{i}_gesture{j}", [wrist_cropped_rgb, top_gesture.score]
+                                    f"person{i}_gesture{j}", [wrist_cropped_rgb, top_gesture]
                                 )
-                                if current_gesture[1] < top_gesture.score:
-                                    best_gestures[f"person{i}_gesture{j}"] = [wrist_cropped_rgb, top_gesture.score]
+                                if current_gesture[1].score < top_gesture.score:
+                                    best_gestures[f"person{i}_gesture{j}"] = [wrist_cropped_rgb, top_gesture]
+
+                with open("outputs/output.mp4", "rb") as video_file:
+                    video_data = video_file.read()
+                    base64_encoded_data = b64encode(video_data)
+                    base64_string = base64_encoded_data.decode("utf-8")
+                    poll_data["people_detected"]["media"] = base64_string
 
                 for key, value in best_gestures.items():
                     if value[0].any():
                         cv2.imwrite(f"outputs/{key}.jpg", value[0])
+                        poll_data["gestures_detected"]["count"] += 1
+                        poll_data["gestures_detected"]["media"].append(value[0])
+                        poll_data["gestures_detected"]["gestures"].setdefault(value[1].category_name, 0)
+                        poll_data["gestures_detected"]["gestures"][value[1].category_name] += 1
+
+        # Convert nparray image array to base64 image string
+        img_byte_arr = io.BytesIO()
+        for index, img in enumerate(poll_data["gestures_detected"]["media"]):
+            gesture_img = Image.fromarray(img.astype("uint8"), "RGB")
+            gesture_img.save(img_byte_arr, format="JPEG")
+            base64_image = b64encode(img_byte_arr.getvalue()).decode("utf-8")
+            poll_data["gestures_detected"]["media"][index] = base64_image
+
+        json_object = json.dumps(poll_data, indent=4)
+        with open("outputs/data.json", "w") as outfile:
+            outfile.write(json_object)
 
         response = Response("200")
         return response
 
     elif request.method == "GET":
-        response = Response("200")
-        return response
+        with open("outputs/data.json", "r") as openfile:
+            json_object = json.load(openfile)
+            return json_object
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="ExploreCSR Demo App")
+    parser = argparse.ArgumentParser(description="QuimPoll")
     app.run(host="0.0.0.0", port=5000)
