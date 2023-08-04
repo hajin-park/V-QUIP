@@ -82,15 +82,20 @@ def inference():
                             )  # Mediapipe only accepts RGB images, cv2 returns BGR image so we must convert it here
                             top_gesture, hand_landmarks = recognize_gesture(wrist_cropped_rgb)
                             if top_gesture != None:
-                                wrist_cropped_rgb = cv2.cvtColor(
-                                    annotate_gesture_and_hand_landmark(wrist_cropped_rgb, top_gesture, hand_landmarks),
-                                    cv2.COLOR_BGR2RGB,
+                                wrist_cropped_bgr = annotate_gesture_and_hand_landmark(
+                                    wrist_cropped_rgb, top_gesture, hand_landmarks
                                 )  # Mediapipe returns a BGR image, convert it back into RGB
-                                cv2.imwrite(f"outputs/person{i}_gesture{j}.jpg", wrist_cropped_rgb)
+                                cv2.imwrite(f"outputs/person{i}_gesture{j}.jpg", wrist_cropped_bgr)
                                 poll_data["gestures_detected"]["count"] += 1
-                                poll_data["gestures_detected"]["media"].append(wrist_cropped_rgb)
                                 poll_data["gestures_detected"]["gestures"].setdefault(top_gesture.category_name, 0)
                                 poll_data["gestures_detected"]["gestures"][top_gesture.category_name] += 1
+
+                                # Convert nparray image array to base64 image string, converts BGR to RGB
+                                img_byte_arr = io.BytesIO()
+                                gesture_img = Image.fromarray(wrist_cropped_bgr.astype("uint8"), "RGB")
+                                gesture_img.save(img_byte_arr, format="JPEG")
+                                base64_image = b64encode(img_byte_arr.getvalue()).decode("utf-8")
+                                poll_data["gestures_detected"]["media"].append(base64_image)
 
                 cv2.imwrite("outputs/output.jpg", pose_annotations)
                 img_byte_arr = io.BytesIO()
@@ -156,15 +161,14 @@ def inference():
                             )  # Mediapipe only accepts RGB images, cv2 returns BGR image so we must convert it here
                             top_gesture, hand_landmarks = recognize_gesture(wrist_cropped_rgb)
                             if top_gesture != None and top_gesture.category_name != "None":
-                                wrist_cropped_rgb = cv2.cvtColor(
-                                    annotate_gesture_and_hand_landmark(wrist_cropped_rgb, top_gesture, hand_landmarks),
-                                    cv2.COLOR_BGR2RGB,
+                                wrist_cropped_bgr = annotate_gesture_and_hand_landmark(
+                                    wrist_cropped_rgb, top_gesture, hand_landmarks
                                 )  # Mediapipe returns a BGR image, convert it back into RGB
                                 current_gesture = best_gestures.setdefault(
-                                    f"person{i}_gesture{j}", [wrist_cropped_rgb, top_gesture]
+                                    f"person{i}_gesture{j}", [wrist_cropped_bgr, top_gesture]
                                 )
                                 if current_gesture[1].score < top_gesture.score:
-                                    best_gestures[f"person{i}_gesture{j}"] = [wrist_cropped_rgb, top_gesture]
+                                    best_gestures[f"person{i}_gesture{j}"] = [wrist_cropped_bgr, top_gesture]
 
                 with open("outputs/output.mp4", "rb") as video_file:
                     video_data = video_file.read()
@@ -176,17 +180,15 @@ def inference():
                     if value[0].any():
                         cv2.imwrite(f"outputs/{key}.jpg", value[0])
                         poll_data["gestures_detected"]["count"] += 1
-                        poll_data["gestures_detected"]["media"].append(value[0])
                         poll_data["gestures_detected"]["gestures"].setdefault(value[1].category_name, 0)
                         poll_data["gestures_detected"]["gestures"][value[1].category_name] += 1
 
-        # Convert nparray image array to base64 image string
-        img_byte_arr = io.BytesIO()
-        for index, img in enumerate(poll_data["gestures_detected"]["media"]):
-            gesture_img = Image.fromarray(img.astype("uint8"), "RGB")
-            gesture_img.save(img_byte_arr, format="JPEG")
-            base64_image = b64encode(img_byte_arr.getvalue()).decode("utf-8")
-            poll_data["gestures_detected"]["media"][index] = base64_image
+                        # Convert nparray image array to base64 image string
+                        img_byte_arr = io.BytesIO()
+                        gesture_img = Image.fromarray(value[0].astype("uint8"), "RGB")
+                        gesture_img.save(img_byte_arr, format="JPEG")
+                        base64_image = b64encode(img_byte_arr.getvalue()).decode("utf-8")
+                        poll_data["gestures_detected"]["media"].append(base64_image)
 
         json_object = json.dumps(poll_data, indent=4)
         with open("outputs/data.json", "w") as outfile:

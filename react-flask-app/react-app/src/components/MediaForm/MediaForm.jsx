@@ -5,6 +5,7 @@ const MediaForm = ({ setPollingMedia }) => {
     const [currentMedia, setCurrentMedia] = useState(null);
 
     const handleMediaSubmit = async (e) => {
+        e.preventDefault();
         let form = new FormData();
         form.append("file", currentMedia);
         try {

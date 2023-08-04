@@ -11,7 +11,7 @@ function App() {
     return (
         <div className="w-full min-h-screen p-8 bg-gray-200">
             <WebcamForm setPollingMedia={setPollingMedia} />
-            <MediaForm setPollingMedi={setPollingMedia} />
+            <MediaForm setPollingMedia={setPollingMedia} />
             <PollingData pollingMedia={pollingMedia} />
         </div>
     );

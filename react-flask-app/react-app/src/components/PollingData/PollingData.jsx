@@ -5,7 +5,7 @@ const PollingData = ({ pollingMedia }) => {
                 <h1 className="font-black text-2xl">Results</h1>
                 <p># People: {pollingMedia["people_detected"].count}</p>
                 <p># Gestures: {pollingMedia["gestures_detected"].count}</p>
-                <p>
+                <div>
                     Gesture details:{" "}
                     {Object.entries(
                         pollingMedia["gestures_detected"]["gestures"]
@@ -14,8 +14,18 @@ const PollingData = ({ pollingMedia }) => {
                             {k}: {v}
                         </p>
                     ))}
-                </p>
-                <p>Image displays: TODO</p>
+                </div>
+                <div className="w-full flex">
+                    {pollingMedia["gestures_detected"]["media"].map(
+                        (base64img) => (
+                            <img
+                                key={base64img}
+                                src={`data:image/jpeg;base64,${base64img}`}
+                                className="w-full h-full"
+                            />
+                        )
+                    )}
+                </div>
             </div>
         )
     );
