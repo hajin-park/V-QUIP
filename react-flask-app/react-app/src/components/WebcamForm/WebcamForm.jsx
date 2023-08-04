@@ -73,12 +73,10 @@ const WebcamForm = ({ setPollingMedia }) => {
         if (recordingURL) {
             // Fetch the data from the URL and convert it into a blob
             const response = await fetch(recordingURL);
-            console.log(recordingURL);
             blob = await response.blob();
         } else if (screenshot) {
             // Convert the base64 string to a Blob object
             let byteCharacters = atob(screenshot.split(",")[1]);
-            console.log(screenshot);
             let byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) {
                 byteNumbers[i] = byteCharacters.charCodeAt(i);

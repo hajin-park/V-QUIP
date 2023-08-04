@@ -1,4 +1,9 @@
+// Examples of how to extract the polling results
+
 const PollingData = ({ pollingMedia }) => {
+    const imageURL = "";
+    const videoURL = "http://127.0.0.1:5000/videos";
+
     return (
         pollingMedia && (
             <div className="w-full p-8 bg-slate-800 rounded-md text-center text-white">
@@ -14,6 +19,16 @@ const PollingData = ({ pollingMedia }) => {
                             {k}: {v}
                         </p>
                     ))}
+                </div>
+                <div>
+                    {imageURL ? (
+                        <img src={imageURL} className="w-full h-full" />
+                    ) : (
+                        <video width="320" height="240" controls>
+                            <source src={videoURL} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    )}
                 </div>
                 <div className="w-full flex">
                     {pollingMedia["gestures_detected"]["media"].map(
