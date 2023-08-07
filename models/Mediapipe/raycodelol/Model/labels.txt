@@ -1,0 +1,3 @@
+0 Peace
+1 Point
+2 Raise Hand
