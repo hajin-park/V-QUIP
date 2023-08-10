@@ -10,7 +10,7 @@ function App() {
 
     return (
         <main className="w-full min-h-screen p-8 bg-gray-200 grid grid-rows-3 md:grid-rows-2 grid-cols-1 md:grid-cols-2">
-            <section className="row-start-1 row-span-2">
+            <section className="row-start-1 md:row-span-2">
                 <WebcamForm setPollingMedia={setPollingMedia} />
                 <MediaForm setPollingMedia={setPollingMedia} />
             </section>

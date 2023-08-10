@@ -70,15 +70,15 @@ const PollingData = ({ pollingMedia }) => {
                                     e.preventDefault();
                                     setShowGestures((e) => !e);
                                 }}
-                                className="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                className="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-300 transition-all"
                             >
                                 {showGestures ? (
-                                    <ArrowUpCircleIcon
+                                    <ArrowDownCircleIcon
                                         className="-ml-1 -mr-0.5 h-5 w-5 text-gray-400"
                                         aria-hidden="true"
                                     />
                                 ) : (
-                                    <ArrowDownCircleIcon
+                                    <ArrowUpCircleIcon
                                         className="-ml-1 -mr-0.5 h-5 w-5 text-gray-400"
                                         aria-hidden="true"
                                     />
@@ -88,13 +88,13 @@ const PollingData = ({ pollingMedia }) => {
                         </div>
                     </div>
                     {showGestures && (
-                        <div className="w-full grid md:grid-flow-col p-8 gap-4 justify-around">
+                        <div className="w-full flex md:flex-row p-8 flex-wrap gap-4 justify-around">
                             {pollingMedia["gesture_annotations"].map(
                                 (base64img) => (
                                     <img
                                         key={base64img}
                                         src={`data:image/jpeg;base64,${base64img}`}
-                                        className="w-32 h-32 object-center object-cover rounded-md"
+                                        className="w-44 h-44 object-center object-cover rounded-md"
                                     />
                                 )
                             )}
@@ -114,20 +114,20 @@ const PollingData = ({ pollingMedia }) => {
                                     e.preventDefault();
                                     setShowGraph((e) => !e);
                                 }}
-                                className="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                className="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-300 transition-all"
                             >
                                 {showGraph ? (
-                                    <ArrowUpCircleIcon
-                                        className="-ml-1 -mr-0.5 h-5 w-5 text-gray-400"
-                                        aria-hidden="true"
-                                    />
-                                ) : (
                                     <ArrowDownCircleIcon
                                         className="-ml-1 -mr-0.5 h-5 w-5 text-gray-400"
                                         aria-hidden="true"
                                     />
+                                ) : (
+                                    <ArrowUpCircleIcon
+                                        className="-ml-1 -mr-0.5 h-5 w-5 text-gray-400"
+                                        aria-hidden="true"
+                                    />
                                 )}
-                                {showGestures ? "Hide" : "View"} Graph
+                                {showGraph ? "Hide" : "View"} Graph
                             </button>
                         </div>
                     </div>
