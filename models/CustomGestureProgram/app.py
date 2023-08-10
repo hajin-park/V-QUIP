@@ -71,6 +71,7 @@ def main():
 
     #  ########################################################################
     mode = 0
+    screenshot_counter = 0
 
     while True:
         fps = cvFpsCalc.get()
@@ -79,7 +80,7 @@ def main():
         key = cv.waitKey(10)
         if key == 27:  # ESC
             break
-        number, mode = select_mode(key, mode)
+        number, mode, screenshot_counter = select_mode(key, mode, screenshot_counter)
 
         # Camera capture #####################################################
         ret, image = cap.read()
@@ -106,7 +107,7 @@ def main():
                 # Conversion to relative coordinates / normalized coordinates
                 pre_processed_landmark_list = pre_process_landmark(landmark_list)
                 # Write to the dataset file
-                logging_csv(number, mode, pre_processed_landmark_list)
+                screenshot_counter = logging_csv(number, mode, pre_processed_landmark_list, screenshot_counter)
 
                 # Hand sign classification
                 hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
@@ -121,7 +122,7 @@ def main():
                     keypoint_classifier_labels[hand_sign_id],
                 )
 
-        debug_image = draw_info(debug_image, fps, mode, number)
+        debug_image = draw_info(debug_image, fps, mode, number, screenshot_counter)
 
         # Screen reflection #############################################################
         cv.imshow("Hand Gesture Recognition", debug_image)
@@ -130,7 +131,7 @@ def main():
     cv.destroyAllWindows()
 
 
-def select_mode(key, mode):
+def select_mode(key, mode, screenshot_counter):
     number = -1
     if 48 <= key <= 57:  # 0 ~ 9
         number = key - 48
@@ -142,9 +143,11 @@ def select_mode(key, mode):
         number = 12
     elif key == 110:  # n
         mode = 0
+        screenshot_counter = 0
     elif key == 107:  # k
         mode = 1
-    return number, mode
+        screenshot_counter = 0
+    return number, mode, screenshot_counter
 
 
 def calc_bounding_rect(image, landmarks):
@@ -207,7 +210,7 @@ def pre_process_landmark(landmark_list):
     return temp_landmark_list
 
 
-def logging_csv(number, mode, landmark_list):
+def logging_csv(number, mode, landmark_list, screenshot_counter):
     if mode == 0:
         pass
     if mode == 1 and (0 <= number <= 12):
@@ -215,7 +218,8 @@ def logging_csv(number, mode, landmark_list):
         with open(csv_path, "a", newline="") as f:
             writer = csv.writer(f)
             writer.writerow([number, *landmark_list])
-    return
+        screenshot_counter += 1
+    return screenshot_counter
 
 
 def draw_landmarks(image, landmark_point):
@@ -364,14 +368,14 @@ def draw_info_text(image, brect, handedness, hand_sign_text):
     return image
 
 
-def draw_info(image, fps, mode, number):
+def draw_info(image, fps, mode, number, screenshot_counter):
     cv.putText(image, "FPS:" + str(fps), (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 4, cv.LINE_AA)
     cv.putText(image, "FPS:" + str(fps), (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2, cv.LINE_AA)
 
     if mode == 1:
         cv.putText(
             image,
-            "MODE:" "Logging Key Point",
+            f"MODE: Logging Key Point {screenshot_counter}",
             (10, 90),
             cv.FONT_HERSHEY_SIMPLEX,
             0.6,
