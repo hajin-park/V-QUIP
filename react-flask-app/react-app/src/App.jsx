@@ -6,7 +6,7 @@ import PollingData from "./components/PollingData/PollingData.jsx";
 import "./App.css";
 
 function App() {
-    const [pollingMedia, setPollingMedia] = useState(null);
+    const [pollingMedia, setPollingMedia] = useState({});
 
     return (
         <div className="w-full min-h-screen p-8 bg-gray-200">
