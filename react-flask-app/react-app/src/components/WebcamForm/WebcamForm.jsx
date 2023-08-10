@@ -95,17 +95,14 @@ const WebcamForm = ({ setPollingMedia }) => {
         );
         form.append("file", file);
         try {
-            const response = await fetch("http://127.0.0.1:5000/inference", {
+            await fetch("http://127.0.0.1:5000/", {
                 method: "PUT",
                 body: form,
             });
             try {
-                const response = await fetch(
-                    "http://127.0.0.1:5000/inference",
-                    {
-                        method: "GET",
-                    }
-                );
+                const response = await fetch("http://127.0.0.1:5000/", {
+                    method: "GET",
+                });
                 if (!response.ok) {
                     throw new Error("Network response was not OK");
                 }

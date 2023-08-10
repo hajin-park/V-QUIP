@@ -1,7 +1,7 @@
 from utils import recognize_gesture, annotate_gesture_and_hand_landmark, gesture_crop_dimensions
 from pathlib import Path
 from ultralytics import YOLO
-from flask import Flask, Response, request, send_from_directory, send_file
+from flask import Flask, Response, request, render_template
 from flask_cors import CORS, cross_origin
 from base64 import b64encode
 from PIL import Image
@@ -26,23 +26,24 @@ DATA_TEMPLATE = {
 }
 
 model = YOLO(r"models/best.pt")
-app = Flask(__name__, static_url_path="/outputs")
+app = Flask(__name__, static_url_path="/static")
 CORS(app, support_credentials=True)
 
 
 @app.put("/")
 @cross_origin(supports_credentials=True)
 def collect_poll_results():
-    [f.unlink() for f in Path("outputs").glob("*") if f.is_file()]  # Clear "outputs" folder content for new submissions
+    # Clear "outputs" folder content for new submissions
+    [f.unlink() for f in Path("outputs").glob("*") if f.is_file()]
 
     if request.files["file"]:
-        # Initialize a new poll data object for new submissions
+        # Initialize a new poll data object for each new submissions
         poll_data = deepcopy(DATA_TEMPLATE)
 
         file = request.files["file"]
         file_extension = file.filename.rsplit(".", 1)[1].lower()
 
-        # Process image file
+        # Process a image file submission
         if file_extension in MEDIA_EXTENSIONS["image"]:
             poll_data["input"] = "image"
             file.save(f"static/media.{file_extension}")
@@ -98,9 +99,9 @@ def collect_poll_results():
                             base64_image = b64encode(img_byte_arr.getvalue()).decode("utf-8")
                             poll_data["gesture_annotations"].append(base64_image)
 
-            cv2.imwrite("outputs/output.jpg", pose_annotations)
+            cv2.imwrite("static/output.jpg", pose_annotations)
 
-        #   Process video file
+        #   Process a video file submission
         elif file_extension in MEDIA_EXTENSIONS["video"]:
             best_gestures = {}
             poll_data["input"] = "video"
@@ -111,7 +112,7 @@ def collect_poll_results():
             frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-            out = cv2.VideoWriter("outputs/output.mp4", fourcc, 30.0, (frame_width, frame_height))
+            out = cv2.VideoWriter("static/output.mp4", fourcc, 30.0, (frame_width, frame_height))
 
             # Annotate the video frame by frame
             while cap.isOpened():
@@ -122,6 +123,7 @@ def collect_poll_results():
                 results = model(frame, save=False)
                 results_plotted = results[0].plot()
                 out.write(results_plotted)
+                poll_data["participants"] = 0
 
                 # Loops through each person detected
                 for i, keypoints in enumerate(results[0].keypoints.cpu().numpy()):
@@ -171,7 +173,7 @@ def collect_poll_results():
                     cv2.imwrite(f"outputs/{key}.jpg", value[0])
                     poll_data["gestures"] += 1
                     poll_data["gesture_categories"].setdefault(value[1].category_name, 0)
-                    poll_data["gestures_detected"][value[1].category_name] += 1
+                    poll_data["gesture_categories"][value[1].category_name] += 1
 
                     # Convert nparray image array to base64 image string
                     img_byte_arr = io.BytesIO()
@@ -196,10 +198,16 @@ def retrieve_poll_results():
         return json_object
 
 
-@app.get("/output")
+@app.get("/video")
 @cross_origin(supports_credentials=True)
-def retrieve_media():
-    pass
+def retrieve_video():
+    return render_template("video.html")
+
+
+@app.get("/image")
+@cross_origin(supports_credentials=True)
+def retrieve_image():
+    return render_template("image.html")
 
 
 if __name__ == "__main__":
