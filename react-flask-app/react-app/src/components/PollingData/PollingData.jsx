@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+// Examples of how to extract the polling results
 
 const PollingData = ({ pollingMedia }) => {
     const [outMedia, setOutputMedia] = useState(null);
@@ -32,12 +32,11 @@ const PollingData = ({ pollingMedia }) => {
     }, [pollingMedia]);
 
     return (
-        <>
-            <h1 className="font-black text-2xl">Results</h1>
-            pollingMedia && (
+        pollingMedia && (
             <div className="w-full p-8 bg-slate-800 rounded-md text-center text-white">
-                <p># People: {pollingMedia["participants"].count}</p>
-                <p># Gestures: {pollingMedia["gestures"].count}</p>
+                <h1 className="font-black text-2xl">Results</h1>
+                <p># People: {pollingMedia["people_detected"].count}</p>
+                <p># Gestures: {pollingMedia["gestures_detected"].count}</p>
                 <div>
                     Gesture details:{" "}
                     {Object.entries(pollingMedia["gesture_categories"]).map(
@@ -63,17 +62,18 @@ const PollingData = ({ pollingMedia }) => {
                     </video>
                 )}
                 <div className="w-full flex">
-                    {pollingMedia["gesture_annotations"].map((base64img) => (
-                        <img
-                            key={base64img}
-                            src={`data:image/jpeg;base64,${base64img}`}
-                            className="w-full h-full"
-                        />
-                    ))}
+                    {pollingMedia["gestures_detected"]["media"].map(
+                        (base64img) => (
+                            <img
+                                key={base64img}
+                                src={`data:image/jpeg;base64,${base64img}`}
+                                className="w-full h-full"
+                            />
+                        )
+                    )}
                 </div>
-            </div>{" "}
-            )
-        </>
+            </div>
+        )
     );
 };
 
