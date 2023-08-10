@@ -207,9 +207,8 @@ const WebcamForm = ({ setPollingMedia }) => {
 
                 {recordingURL && (
                     <video
-                        controls
                         autoPlay
-                        className="mx-auto border-8 border-white rounded-2xl"
+                        className="mx-auto border-8 border-white rounded-2xl rotate mirrored"
                     >
                         <source src={recordingURL} type="video/webm" />
                     </video>
@@ -219,6 +218,7 @@ const WebcamForm = ({ setPollingMedia }) => {
                     <Webcam
                         audio={false}
                         videoConstraints={videoConstraints}
+                        mirrored={true}
                         className="mx-auto border-8 border-white rounded-2xl"
                         ref={webcamRef}
                     />

@@ -37,7 +37,7 @@ const MediaForm = ({ setPollingMedia }) => {
     };
 
     return (
-        <div className="p-8 divide-y divide-gray-900/10 flex flex-col gap-x-8 gap-y-8 md:flex-row place-content-center">
+        <div className="h-fit p-8 divide-y divide-gray-900/10 flex flex-col gap-x-8 gap-y-8 md:flex-row place-content-center">
             <div className="px-4 sm:px-0">
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
                     Or...

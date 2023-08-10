@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.mirrored {
+    transform: rotateY(180deg);
+}
