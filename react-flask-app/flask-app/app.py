@@ -166,12 +166,16 @@ def collect_poll_results():
             frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             fourcc = cv2.VideoWriter_fourcc(*"mp4v")
             out = cv2.VideoWriter("static/output.mp4", fourcc, 30.0, (frame_width, frame_height))
+            frame_counter = -1
 
             # Annotate the video frame by frame
             while cap.isOpened():
+                frame_counter += 1
                 ret, frame = cap.read()
                 if not ret:
                     break
+                if frame_counter % 5 != 0:
+                    continue
 
                 results = yolo(frame, save=False)
                 results_plotted = results[0].plot()
@@ -249,7 +253,7 @@ def collect_poll_results():
                                         debug_image,
                                         [keypoint_classifier_labels[hand_sign_id], hand_sign_confidence],
                                     ]
-
+            print(frame_counter)
             for key, value in best_gestures.items():
                 if value[0].any():
                     cv2.imwrite(f"outputs/{key}.jpg", value[0])
