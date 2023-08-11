@@ -17,6 +17,7 @@ from PIL import Image
 from copy import deepcopy
 import mediapipe as mp
 from models import KeyPointClassifier
+import os
 import csv
 import io
 import json
@@ -61,6 +62,10 @@ with open(
 @app.put("/")
 @cross_origin(supports_credentials=True)
 def collect_poll_results():
+    # Make new media directories if they dont already exist
+    os.makedirs("static", exist_ok=True)
+    os.makedirs("outputs", exist_ok=True)
+
     # Clear "outputs" folder content for new submissions
     [f.unlink() for f in Path("outputs").glob("*") if f.is_file()]
 

@@ -213,9 +213,9 @@ def draw_info_text(image, brect, handedness, hand_sign_text):
 
 
 def gesture_crop_dimensions(x, y, hand_crop, width, height):
-    x_upper = int(x - hand_crop / 1.75) if int(x - hand_crop / 1.75) > 0 else 0
-    y_upper = int(y - hand_crop * 1.75) if int(y - hand_crop * 1.75) > 0 else 0
-    x_lower = int(x + hand_crop / 1.75) if int(x + hand_crop / 1.75) < width else width
-    y_lower = int(y + hand_crop / 3) if int(y + hand_crop / 3) < height else height
+    x_upper = int(x - hand_crop) if int(x - hand_crop) > 0 else 0
+    y_upper = int(y - hand_crop * 2) if int(y - hand_crop * 2) > 0 else 0
+    x_lower = int(x + hand_crop) if int(x + hand_crop) < width else width
+    y_lower = int(y + hand_crop / 2) if int(y + hand_crop / 2) < height else height
 
     return x_upper, y_upper, x_lower, y_lower
