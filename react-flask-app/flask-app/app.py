@@ -1,4 +1,13 @@
-from utils import recognize_gesture, annotate_gesture_and_hand_landmark, gesture_crop_dimensions
+from utils import (
+    gesture_crop_dimensions,
+    calc_bounding_rect,
+    calc_landmark_list,
+    pre_process_landmark,
+    draw_landmarks,
+    draw_bounding_rect,
+    draw_info_text,
+    gesture_crop_dimensions,
+)
 from pathlib import Path
 from ultralytics import YOLO
 from flask import Flask, Response, request, render_template
@@ -6,9 +15,11 @@ from flask_cors import CORS, cross_origin
 from base64 import b64encode
 from PIL import Image
 from copy import deepcopy
+import mediapipe as mp
+from models import KeyPointClassifier
+import csv
 import io
 import json
-import argparse
 import cv2
 
 
@@ -25,9 +36,26 @@ DATA_TEMPLATE = {
     "input": "",
 }
 
-model = YOLO(r"models/best.pt")
+yolo = YOLO(r"models/PoseEstimation/best.pt")
 app = Flask(__name__, static_url_path="/static")
 CORS(app, support_credentials=True)
+
+# Model Gesture Model
+use_brect = True
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(
+    static_image_mode=True,
+    max_num_hands=1,
+    min_detection_confidence=0.6,
+    min_tracking_confidence=0.5,
+)
+keypoint_classifier = KeyPointClassifier()
+with open(
+    r"models/CustomGestures/keypoint_classifier_label.csv",
+    encoding="utf-8",
+) as f:
+    keypoint_classifier_labels = csv.reader(f)
+    keypoint_classifier_labels = [row[0].replace("\ufeff", "") for row in keypoint_classifier_labels]
 
 
 @app.put("/")
@@ -48,7 +76,7 @@ def collect_poll_results():
             poll_data["input"] = "image"
             file.save(f"static/media.{file_extension}")
             image = cv2.imread(f"static/media.{file_extension}")  # BGR image array
-            results = model.predict(
+            results = yolo.predict(
                 image, save=False
             )  # Returns an array, each item corresponds to each frame/image passed in
             pose_annotations = results[0].plot()
@@ -79,25 +107,50 @@ def collect_poll_results():
                             x_upper:x_lower,
                         ]
 
-                        # Mediapipe only accepts RGB images, we must convert this here
+                        # Extract Hand Landmark data
                         wrist_cropped_rgb = cv2.cvtColor(wrist_cropped, cv2.COLOR_BGR2RGB)
-                        top_gesture, hand_landmarks = recognize_gesture(wrist_cropped_rgb)
-                        if top_gesture != None:
-                            # Mediapipe returns a BGR image
-                            wrist_cropped_bgr = annotate_gesture_and_hand_landmark(
-                                wrist_cropped_rgb, top_gesture, hand_landmarks
-                            )
-                            cv2.imwrite(f"outputs/person{i}_gesture{j}.jpg", wrist_cropped_bgr)
-                            poll_data["gestures"] += 1
-                            poll_data["gesture_categories"].setdefault(top_gesture.category_name, 0)
-                            poll_data["gesture_categories"][top_gesture.category_name] += 1
+                        debug_image = deepcopy(wrist_cropped_rgb)
+                        wrist_cropped_rgb.flags.writeable = False
+                        results = hands.process(wrist_cropped_rgb)
+                        wrist_cropped_rgb.flags.writeable = True
 
-                            # Convert nparray image array to base64 image string, converts BGR to RGB
-                            img_byte_arr = io.BytesIO()
-                            gesture_img = Image.fromarray(wrist_cropped_bgr.astype("uint8"), "RGB")
-                            gesture_img.save(img_byte_arr, format="JPEG")
-                            base64_image = b64encode(img_byte_arr.getvalue()).decode("utf-8")
-                            poll_data["gesture_annotations"].append(base64_image)
+                        # Draw hand landmarks and classify gesture
+                        if results.multi_hand_landmarks is not None:
+                            for hand_landmarks, handedness in zip(
+                                results.multi_hand_landmarks, results.multi_handedness
+                            ):
+                                # Bounding box calculation
+                                brect = calc_bounding_rect(debug_image, hand_landmarks)
+                                # Landmark calculation
+                                landmark_list = calc_landmark_list(debug_image, hand_landmarks)
+
+                                # Conversion to relative coordinates / normalized coordinates
+                                pre_processed_landmark_list = pre_process_landmark(landmark_list)
+
+                                # Hand sign classification
+                                hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
+
+                                # Drawing part
+                                debug_image = draw_bounding_rect(use_brect, debug_image, brect)
+                                debug_image = draw_landmarks(debug_image, landmark_list)
+                                debug_image = draw_info_text(
+                                    debug_image,
+                                    brect,
+                                    handedness,
+                                    keypoint_classifier_labels[hand_sign_id],
+                                )
+
+                                cv2.imwrite(f"outputs/person{i}_gesture{j}.jpg", debug_image)
+                                poll_data["gestures"] += 1
+                                poll_data["gesture_categories"].setdefault(keypoint_classifier_labels[hand_sign_id], 0)
+                                poll_data["gesture_categories"][keypoint_classifier_labels[hand_sign_id]] += 1
+
+                                # Convert nparray image array to base64 image string, converts BGR to RGB
+                                img_byte_arr = io.BytesIO()
+                                gesture_img = Image.fromarray(debug_image.astype("uint8"), "RGB")
+                                gesture_img.save(img_byte_arr, format="JPEG")
+                                base64_image = b64encode(img_byte_arr.getvalue()).decode("utf-8")
+                                poll_data["gesture_annotations"].append(base64_image)
 
             cv2.imwrite("static/output.jpg", pose_annotations)
 
@@ -120,7 +173,7 @@ def collect_poll_results():
                 if not ret:
                     break
 
-                results = model(frame, save=False)
+                results = yolo(frame, save=False)
                 results_plotted = results[0].plot()
                 out.write(results_plotted)
                 poll_data["participants"] = 0
@@ -153,20 +206,48 @@ def collect_poll_results():
                             y_upper:y_lower,
                             x_upper:x_lower,
                         ]
-                        wrist_cropped_rgb = cv2.cvtColor(
-                            wrist_cropped, cv2.COLOR_BGR2RGB
-                        )  # Mediapipe only accepts RGB images, cv2 returns BGR image so we must convert it here
-                        top_gesture, hand_landmarks = recognize_gesture(wrist_cropped_rgb)
-                        if top_gesture != None and top_gesture.category_name != "None":
-                            # Mediapipe returns a BGR image
-                            wrist_cropped_bgr = annotate_gesture_and_hand_landmark(
-                                wrist_cropped_rgb, top_gesture, hand_landmarks
-                            )
-                            current_gesture = best_gestures.setdefault(
-                                f"person{i}_gesture{j}", [wrist_cropped_bgr, top_gesture]
-                            )
-                            if current_gesture[1].score < top_gesture.score:
-                                best_gestures[f"person{i}_gesture{j}"] = [wrist_cropped_bgr, top_gesture]
+
+                        # Extract Hand Landmark data
+                        wrist_cropped_rgb = cv2.cvtColor(wrist_cropped, cv2.COLOR_BGR2RGB)
+                        debug_image = copy.deepcopy(wrist_cropped_rgb)
+                        wrist_cropped_rgb.flags.writeable = False
+                        results = hands.process(wrist_cropped_rgb)
+                        wrist_cropped_rgb.flags.writeable = True
+
+                        # Draw hand landmarks and classify gesture
+                        if results.multi_hand_landmarks is not None:
+                            for hand_landmarks, handedness in zip(
+                                results.multi_hand_landmarks, results.multi_handedness
+                            ):
+                                # Bounding box calculation
+                                brect = calc_bounding_rect(debug_image, hand_landmarks)
+                                # Landmark calculation
+                                landmark_list = calc_landmark_list(debug_image, hand_landmarks)
+
+                                # Conversion to relative coordinates / normalized coordinates
+                                pre_processed_landmark_list = pre_process_landmark(landmark_list)
+
+                                # Hand sign classification
+                                hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
+
+                                # Drawing part
+                                debug_image = draw_bounding_rect(use_brect, debug_image, brect)
+                                debug_image = draw_landmarks(debug_image, landmark_list)
+                                debug_image = draw_info_text(
+                                    debug_image,
+                                    brect,
+                                    handedness,
+                                    keypoint_classifier_labels[hand_sign_id],
+                                )
+
+                                current_gesture = best_gestures.setdefault(
+                                    f"person{i}_gesture{j}", [debug_image, keypoint_classifier_labels[hand_sign_id]]
+                                )
+                                if current_gesture[1].score < keypoint_classifier_labels[hand_sign_id]:
+                                    best_gestures[f"person{i}_gesture{j}"] = [
+                                        debug_image,
+                                        keypoint_classifier_labels[hand_sign_id],
+                                    ]
 
             for key, value in best_gestures.items():
                 if value[0].any():

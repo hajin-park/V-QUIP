@@ -28,6 +28,9 @@ def get_args():
     return args
 
 
+0
+
+
 def main():
     # Argument parsing #################################################################
     args = get_args()
@@ -141,6 +144,8 @@ def select_mode(key, mode, screenshot_counter):
         number = 11
     elif key == 101:  # e
         number = 12
+    elif key == 114:  # r
+        number = 13
     elif key == 110:  # n
         mode = 0
         screenshot_counter = 0
@@ -213,7 +218,7 @@ def pre_process_landmark(landmark_list):
 def logging_csv(number, mode, landmark_list, screenshot_counter):
     if mode == 0:
         pass
-    if mode == 1 and (0 <= number <= 12):
+    if mode == 1 and (0 <= number <= 13):
         csv_path = r"C:\Users\hajin\Desktop\Code\Repositories\QuimPoll\models\CustomGestureProgram\model\keypoint_classifier\keypoint.csv"
         with open(csv_path, "a", newline="") as f:
             writer = csv.writer(f)

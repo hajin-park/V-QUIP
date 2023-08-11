@@ -6,7 +6,7 @@ import tensorflow as tf
 class KeyPointClassifier(object):
     def __init__(
         self,
-        model_path=r"C:\Users\hajin\Desktop\Code\Repositories\QuimPoll\models\CustomGestureProgram\model\keypoint_classifier\keypoint_classifier.tflite",
+        model_path=r"models/CustomGestures/keypoint_classifier.tflite",
         num_threads=1,
     ):
         self.interpreter = tf.lite.Interpreter(model_path=model_path, num_threads=num_threads)
@@ -26,6 +26,7 @@ class KeyPointClassifier(object):
         output_details_tensor_index = self.output_details[0]["index"]
 
         result = self.interpreter.get_tensor(output_details_tensor_index)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", result)
 
         result_index = np.argmax(np.squeeze(result))
 

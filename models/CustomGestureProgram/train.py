@@ -4,7 +4,7 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 
 RANDOM_SEED = 42
-NUM_CLASSES = 13
+NUM_CLASSES = 14
 
 dataset = r"C:\Users\hajin\Desktop\Code\Repositories\QuimPoll\models\CustomGestureProgram\model\keypoint_classifier\keypoint.csv"
 model_save_path = r"C:\Users\hajin\Desktop\Code\Repositories\QuimPoll\models\CustomGestureProgram\model\keypoint_classifier\keypoint_classifier.hdf5"
