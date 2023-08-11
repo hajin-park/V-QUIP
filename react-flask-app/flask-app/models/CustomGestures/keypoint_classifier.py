@@ -25,9 +25,10 @@ class KeyPointClassifier(object):
 
         output_details_tensor_index = self.output_details[0]["index"]
 
+        # result is an array of confidence scores of each csv label
         result = self.interpreter.get_tensor(output_details_tensor_index)
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", result)
 
         result_index = np.argmax(np.squeeze(result))
+        result_score = np.squeeze(result)[result_index]
 
-        return result_index
+        return result_index, result_score

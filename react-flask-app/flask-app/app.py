@@ -128,7 +128,7 @@ def collect_poll_results():
                                 pre_processed_landmark_list = pre_process_landmark(landmark_list)
 
                                 # Hand sign classification
-                                hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
+                                hand_sign_id, hand_sign_confidence = keypoint_classifier(pre_processed_landmark_list)
 
                                 # Drawing part
                                 debug_image = draw_bounding_rect(use_brect, debug_image, brect)
@@ -209,7 +209,7 @@ def collect_poll_results():
 
                         # Extract Hand Landmark data
                         wrist_cropped_rgb = cv2.cvtColor(wrist_cropped, cv2.COLOR_BGR2RGB)
-                        debug_image = copy.deepcopy(wrist_cropped_rgb)
+                        debug_image = deepcopy(wrist_cropped_rgb)
                         wrist_cropped_rgb.flags.writeable = False
                         results = hands.process(wrist_cropped_rgb)
                         wrist_cropped_rgb.flags.writeable = True
@@ -228,7 +228,7 @@ def collect_poll_results():
                                 pre_processed_landmark_list = pre_process_landmark(landmark_list)
 
                                 # Hand sign classification
-                                hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
+                                hand_sign_id, hand_sign_confidence = keypoint_classifier(pre_processed_landmark_list)
 
                                 # Drawing part
                                 debug_image = draw_bounding_rect(use_brect, debug_image, brect)
@@ -241,20 +241,21 @@ def collect_poll_results():
                                 )
 
                                 current_gesture = best_gestures.setdefault(
-                                    f"person{i}_gesture{j}", [debug_image, keypoint_classifier_labels[hand_sign_id]]
+                                    f"person{i}_gesture{j}",
+                                    [debug_image, [keypoint_classifier_labels[hand_sign_id], hand_sign_confidence]],
                                 )
-                                if current_gesture[1].score < keypoint_classifier_labels[hand_sign_id]:
+                                if current_gesture[1][1] < hand_sign_confidence:
                                     best_gestures[f"person{i}_gesture{j}"] = [
                                         debug_image,
-                                        keypoint_classifier_labels[hand_sign_id],
+                                        [keypoint_classifier_labels[hand_sign_id], hand_sign_confidence],
                                     ]
 
             for key, value in best_gestures.items():
                 if value[0].any():
                     cv2.imwrite(f"outputs/{key}.jpg", value[0])
                     poll_data["gestures"] += 1
-                    poll_data["gesture_categories"].setdefault(value[1].category_name, 0)
-                    poll_data["gesture_categories"][value[1].category_name] += 1
+                    poll_data["gesture_categories"].setdefault(value[1][0], 0)
+                    poll_data["gesture_categories"][value[1][0]] += 1
 
                     # Convert nparray image array to base64 image string
                     img_byte_arr = io.BytesIO()
