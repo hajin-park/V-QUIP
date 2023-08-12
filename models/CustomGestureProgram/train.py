@@ -6,9 +6,9 @@ from sklearn.model_selection import train_test_split
 RANDOM_SEED = 42
 NUM_CLASSES = 14
 
-dataset = r"C:\Users\hajin\Desktop\Code\Repositories\QuimPoll\models\CustomGestureProgram\model\keypoint_classifier\keypoint.csv"
-model_save_path = r"C:\Users\hajin\Desktop\Code\Repositories\QuimPoll\models\CustomGestureProgram\model\keypoint_classifier\keypoint_classifier.hdf5"
-tflite_save_path = r"C:\Users\hajin\Desktop\Code\Repositories\QuimPoll\models\CustomGestureProgram\model\keypoint_classifier\keypoint_classifier.tflite"
+dataset = r"models\CustomGestureProgram\model\keypoint_classifier\keypoint.csv"
+model_save_path = r"models\CustomGestureProgram\model\keypoint_classifier\keypoint_classifier.hdf5"
+tflite_save_path = r"models\CustomGestureProgram\model\keypoint_classifier\keypoint_classifier.tflite"
 
 x_dataset = np.loadtxt(dataset, delimiter=",", dtype="float32", usecols=list(range(1, (21 * 2) + 1)))
 y_dataset = np.loadtxt(dataset, delimiter=",", dtype="int32", usecols=(0))

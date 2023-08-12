@@ -63,7 +63,7 @@ def main():
 
     # Read labels ###########################################################
     with open(
-        r"C:\Users\hajin\Desktop\Code\Repositories\QuimPoll\models\CustomGestureProgram\model\keypoint_classifier\keypoint_classifier_label.csv",
+        r"models\CustomGestureProgram\model\keypoint_classifier\keypoint_classifier_label.csv",
         encoding="latin-1",
     ) as f:
         keypoint_classifier_labels = csv.reader(f)
