@@ -249,16 +249,26 @@ def collect_poll_results():
                                     keypoint_classifier_labels[hand_sign_id],
                                 )
 
+                                # Add a new gesture to this wrist in best_gestures if it doesn't exist
+                                # otherwise current_gesture is set to the existing gesture at this wrist
                                 current_gesture = best_gestures.setdefault(
                                     f"person{i}_gesture{j}",
                                     [debug_image, [keypoint_classifier_labels[hand_sign_id], hand_sign_confidence]],
                                 )
+
+                                # if current_gesture[1][1] == hand_sign_confidence then it is a new gesture,
+                                # nothing changes.
+                                # if current_gesture[1][1] > hand_sign_confidence then the new gesture has a
+                                # lower confidence than the existing best gesture, nothing changes.
+                                # if current_gesture[1][1] < hand_sign_confidence then the new gesture has a
+                                # higher confidence than the current best gesture, so the new gesture replaces
+                                # the previous best gesture at this wrist.
                                 if current_gesture[1][1] < hand_sign_confidence:
                                     best_gestures[f"person{i}_gesture{j}"] = [
                                         debug_image,
                                         [keypoint_classifier_labels[hand_sign_id], hand_sign_confidence],
                                     ]
-            print(frame_counter)
+
             for key, value in best_gestures.items():
                 if value[0].any():
                     cv2.imwrite(f"outputs/{key}.jpg", value[0])
