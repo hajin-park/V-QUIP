@@ -1,1 +1,0 @@
-from models.CustomGestures.keypoint_classifier import KeyPointClassifier
