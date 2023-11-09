@@ -8,10 +8,10 @@ import math
 
 DESIRED_HEIGHT = 480
 DESIRED_WIDTH = 480
-IMAGE_FILENAMES = ["models/Mediapipe/mp_test_1.png", "models/Mediapipe/mp_test_2.png"]
+IMAGE_FILENAMES = ["mp_test_1.png", "mp_test_2.png"]
 
 
-base_options = python.BaseOptions(model_asset_path="models/Mediapipe/models/gesture_recognizer.task")
+base_options = python.BaseOptions(model_asset_path="models/gesture_recognizer.task")
 options = vision.GestureRecognizerOptions(base_options=base_options)
 recognizer = vision.GestureRecognizer.create_from_options(options)
 
@@ -57,7 +57,9 @@ def run():
             if top_gesture == None:
                 cv2.imshow("Mediapipe Gesture Recognition", flipped_frame)
             else:
-                annotated_frame = annotate_gesture_and_hand_landmark(flipped_frame, top_gesture, hand_landmarks)
+                annotated_frame = annotate_gesture_and_hand_landmark(
+                    flipped_frame, top_gesture, hand_landmarks
+                )
                 cv2.imshow("Mediapipe Gesture Recognition", annotated_frame)
 
             if cv2.waitKey(1) == ord("q"):

@@ -7,7 +7,7 @@ import copy
 import argparse
 import itertools
 
-DATASET_PATH = r"models\CustomGestureProgram\dataset"
+DATASET_PATH = r"dataset"
 
 files = Path(DATASET_PATH).glob("*")
 for file in files:
