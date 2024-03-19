@@ -1,4 +1,4 @@
-name: vquip-backend
+name: vquip-models
 channels:
     - defaults
 dependencies:
