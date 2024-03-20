@@ -13,16 +13,17 @@
 > announcing the poll activity and gauging the visual cues, e.g., raising of
 > hands and performing other hand gestures, that are provided by the students in
 > response. However, this can be a time consuming or an error prone process in
-> large classrooms. This project introduces a vision-based system to quickly and
-> accurately conduct impromptu polls in classrooms. The system relies on a
-> camera commonly found in many classrooms to gather visual data and process it
-> using Machine Learning-based computer vision tools. The system provides a
-> simple interface to the instructor to conduct the impromptu polls and display
-> the counts for various gestures that are gathered in response. The system also
-> provides the added advantage of conducting impromptu polls that involve
-> questions with more nuanced responses than binary gestures (e.g., thumbs
-> up/down or raising of hands) that can be quickly and accurately evaluated by
-> the instructor.
+> large classrooms.
+>
+> This project introduces a vision-based system to quickly and accurately
+> conduct impromptu polls in classrooms. The system relies on a camera commonly
+> found in many classrooms to gather visual data and process it using Machine
+> Learning-based computer vision tools. The system provides a simple interface
+> to the instructor to conduct the impromptu polls and display the counts for
+> various gestures that are gathered in response. The system also provides the
+> added advantage of conducting impromptu polls that involve questions with more
+> nuanced responses than binary gestures (e.g., thumbs up/down or raising of
+> hands) that can be quickly and accurately evaluated by the instructor.
 
 ---
 
