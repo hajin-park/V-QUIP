@@ -25,9 +25,13 @@
 > nuanced responses than binary gestures (e.g., thumbs up/down or raising of
 > hands) that can be quickly and accurately evaluated by the instructor.
 
----
+## Installation
 
-### References
+
+## Usage
+
+
+## References
 
 -   [Jung In Koh, Samantha Ray, Josh Cherian, Paul Taele, and Tracy Hammond. 2022. Show of Hands: Leveraging Hand Gestural Cues in Virtual Meetings for Intelligent Impromptu Polling Interactions. In 27th International Conference on Intelligent User Interfaces (Helsinki, Finland) (IUI ’22). Association for Computing Machinery, New York, NY, USA, 292–309. https://doi.org/10.1145/3490099.3511153](https://doi.org/10.1145/3490099.3511153)
 -   [K. He, X. Zhang, S. Ren, and J. Sun, “Deep residual learning for image recognition,” in Proc. of the IEEE/CVF Conf. on Computer Vision and Pattern Recognition (CVPR), 2016, pp. 770–778.](https://doi.org/10.1109/CVPR.2016.90)
