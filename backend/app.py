@@ -22,6 +22,7 @@ import csv
 import io
 import json
 import cv2
+from werkzeug.utils import secure_filename # for file security 
 
 
 GESTURE_THRESHOLD = 0.5
@@ -81,8 +82,10 @@ def collect_poll_results():
         # Process a image file submission
         if file_extension in MEDIA_EXTENSIONS["image"]:
             poll_data["input"] = "image"
-            file.save(f"static/media.{file_extension}")
-            image = cv2.imread(f"static/media.{file_extension}")  # BGR image array
+            safe_filename = secure_filename(file.filename) # created a secure filname to avoid any security issues
+            file_path = os.path.join("static", "media", safe_filename) # file path construction security
+            file.save(file_path)
+            image = cv2.imread(file_path)  # BGR image array # channged the file path to the secure file path
             results = yolo.predict(
                 image, save=False
             )  # Returns an array, each item corresponds to each frame/image passed in
