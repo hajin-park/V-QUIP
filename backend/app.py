@@ -22,6 +22,7 @@ import csv
 import io
 import json
 import cv2
+from werkzeug.utils import secure_filename # for file security 
 
 
 GESTURE_THRESHOLD = 0.5
@@ -56,7 +57,9 @@ with open(
     encoding="utf-8",
 ) as f:
     keypoint_classifier_labels = csv.reader(f)
-    keypoint_classifier_labels = [row[0].replace("\ufeff", "") for row in keypoint_classifier_labels]
+    keypoint_classifier_labels = [
+        row[0].replace("\ufeff", "") for row in keypoint_classifier_labels
+    ]
 
 
 @app.put("/")
@@ -79,8 +82,10 @@ def collect_poll_results():
         # Process a image file submission
         if file_extension in MEDIA_EXTENSIONS["image"]:
             poll_data["input"] = "image"
-            file.save(f"static/media.{file_extension}")
-            image = cv2.imread(f"static/media.{file_extension}")  # BGR image array
+            safe_filename = secure_filename(file.filename) # created a secure filname to avoid any security issues
+            file_path = os.path.join("static", "media", safe_filename) # file path construction security
+            file.save(file_path)
+            image = cv2.imread(file_path)  # BGR image array # channged the file path to the secure file path
             results = yolo.predict(
                 image, save=False
             )  # Returns an array, each item corresponds to each frame/image passed in
@@ -96,24 +101,32 @@ def collect_poll_results():
                 shoulder_right = keypoints.data[0][6]
                 wrist_left = keypoints.data[0][9]
                 wrist_right = keypoints.data[0][10]
-                hand_crop = ear_left[0] - ear_right[0]  # Set gesture crop dimensions relative to the person's face size
+                hand_crop = (
+                    ear_left[0] - ear_right[0]
+                )  # Set gesture crop dimensions relative to the person's face size
                 poll_data["participants"] += 1
 
                 for j, wrist_data in enumerate([wrist_left, wrist_right]):
                     x, y, confidence = wrist_data
 
                     # Trigger gesture recognition on hands above a point slightly below their shoulders
-                    hand_raised = y < ((shoulder_left[1] + shoulder_right[1]) / 2) + (hand_crop / 2)
+                    hand_raised = y < ((shoulder_left[1] + shoulder_right[1]) / 2) + (
+                        hand_crop / 2
+                    )
 
                     if confidence > GESTURE_THRESHOLD and hand_raised:
-                        x_upper, y_upper, x_lower, y_lower = gesture_crop_dimensions(x, y, hand_crop, width, height)
+                        x_upper, y_upper, x_lower, y_lower = gesture_crop_dimensions(
+                            x, y, hand_crop, width, height
+                        )
                         wrist_cropped = image[
                             y_upper:y_lower,
                             x_upper:x_lower,
                         ]
 
                         # Extract Hand Landmark data
-                        wrist_cropped_rgb = cv2.cvtColor(wrist_cropped, cv2.COLOR_BGR2RGB)
+                        wrist_cropped_rgb = cv2.cvtColor(
+                            wrist_cropped, cv2.COLOR_BGR2RGB
+                        )
                         debug_image = deepcopy(wrist_cropped_rgb)
                         wrist_cropped_rgb.flags.writeable = False
                         results = hands.process(wrist_cropped_rgb)
@@ -127,16 +140,24 @@ def collect_poll_results():
                                 # Bounding box calculation
                                 brect = calc_bounding_rect(debug_image, hand_landmarks)
                                 # Landmark calculation
-                                landmark_list = calc_landmark_list(debug_image, hand_landmarks)
+                                landmark_list = calc_landmark_list(
+                                    debug_image, hand_landmarks
+                                )
 
                                 # Conversion to relative coordinates / normalized coordinates
-                                pre_processed_landmark_list = pre_process_landmark(landmark_list)
+                                pre_processed_landmark_list = pre_process_landmark(
+                                    landmark_list
+                                )
 
                                 # Hand sign classification
-                                hand_sign_id, hand_sign_confidence = keypoint_classifier(pre_processed_landmark_list)
+                                hand_sign_id, hand_sign_confidence = (
+                                    keypoint_classifier(pre_processed_landmark_list)
+                                )
 
                                 # Drawing part
-                                debug_image = draw_bounding_rect(use_brect, debug_image, brect)
+                                debug_image = draw_bounding_rect(
+                                    use_brect, debug_image, brect
+                                )
                                 debug_image = draw_landmarks(debug_image, landmark_list)
                                 debug_image = draw_info_text(
                                     debug_image,
@@ -145,16 +166,26 @@ def collect_poll_results():
                                     keypoint_classifier_labels[hand_sign_id],
                                 )
 
-                                cv2.imwrite(f"outputs/person{i}_gesture{j}.jpg", debug_image)
+                                cv2.imwrite(
+                                    f"outputs/person{i}_gesture{j}.jpg", debug_image
+                                )
                                 poll_data["gestures"] += 1
-                                poll_data["gesture_categories"].setdefault(keypoint_classifier_labels[hand_sign_id], 0)
-                                poll_data["gesture_categories"][keypoint_classifier_labels[hand_sign_id]] += 1
+                                poll_data["gesture_categories"].setdefault(
+                                    keypoint_classifier_labels[hand_sign_id], 0
+                                )
+                                poll_data["gesture_categories"][
+                                    keypoint_classifier_labels[hand_sign_id]
+                                ] += 1
 
                                 # Convert nparray image array to base64 image string, converts BGR to RGB
                                 img_byte_arr = io.BytesIO()
-                                gesture_img = Image.fromarray(debug_image.astype("uint8"), "RGB")
+                                gesture_img = Image.fromarray(
+                                    debug_image.astype("uint8"), "RGB"
+                                )
                                 gesture_img.save(img_byte_arr, format="JPEG")
-                                base64_image = b64encode(img_byte_arr.getvalue()).decode("utf-8")
+                                base64_image = b64encode(
+                                    img_byte_arr.getvalue()
+                                ).decode("utf-8")
                                 poll_data["gesture_annotations"].append(base64_image)
 
             cv2.imwrite("static/output.jpg", pose_annotations)
@@ -170,7 +201,9 @@ def collect_poll_results():
             frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-            out = cv2.VideoWriter("static/output.mp4", fourcc, 30.0, (frame_width, frame_height))
+            out = cv2.VideoWriter(
+                "static/output.mp4", fourcc, 30.0, (frame_width, frame_height)
+            )
             frame_counter = -1
 
             # Annotate the video frame by frame
@@ -205,7 +238,9 @@ def collect_poll_results():
                     x, y, confidence = wrist_data
 
                     # Trigger gesture recognition on hands above a point slightly below their shoulders
-                    hand_raised = y < ((shoulder_left[1] + shoulder_right[1]) / 2) + (hand_crop / 2)
+                    hand_raised = y < ((shoulder_left[1] + shoulder_right[1]) / 2) + (
+                        hand_crop / 2
+                    )
 
                     if confidence > GESTURE_THRESHOLD and hand_raised:
                         x_upper, y_upper, x_lower, y_lower = gesture_crop_dimensions(
@@ -217,7 +252,9 @@ def collect_poll_results():
                         ]
 
                         # Extract Hand Landmark data
-                        wrist_cropped_rgb = cv2.cvtColor(wrist_cropped, cv2.COLOR_BGR2RGB)
+                        wrist_cropped_rgb = cv2.cvtColor(
+                            wrist_cropped, cv2.COLOR_BGR2RGB
+                        )
                         debug_image = deepcopy(wrist_cropped_rgb)
                         wrist_cropped_rgb.flags.writeable = False
                         results = hands.process(wrist_cropped_rgb)
@@ -231,16 +268,24 @@ def collect_poll_results():
                                 # Bounding box calculation
                                 brect = calc_bounding_rect(debug_image, hand_landmarks)
                                 # Landmark calculation
-                                landmark_list = calc_landmark_list(debug_image, hand_landmarks)
+                                landmark_list = calc_landmark_list(
+                                    debug_image, hand_landmarks
+                                )
 
                                 # Conversion to relative coordinates / normalized coordinates
-                                pre_processed_landmark_list = pre_process_landmark(landmark_list)
+                                pre_processed_landmark_list = pre_process_landmark(
+                                    landmark_list
+                                )
 
                                 # Hand sign classification
-                                hand_sign_id, hand_sign_confidence = keypoint_classifier(pre_processed_landmark_list)
+                                hand_sign_id, hand_sign_confidence = (
+                                    keypoint_classifier(pre_processed_landmark_list)
+                                )
 
                                 # Drawing part
-                                debug_image = draw_bounding_rect(use_brect, debug_image, brect)
+                                debug_image = draw_bounding_rect(
+                                    use_brect, debug_image, brect
+                                )
                                 debug_image = draw_landmarks(debug_image, landmark_list)
                                 debug_image = draw_info_text(
                                     debug_image,
@@ -253,7 +298,13 @@ def collect_poll_results():
                                 # otherwise current_gesture is set to the existing gesture at this wrist
                                 current_gesture = best_gestures.setdefault(
                                     f"person{i}_gesture{j}",
-                                    [debug_image, [keypoint_classifier_labels[hand_sign_id], hand_sign_confidence]],
+                                    [
+                                        debug_image,
+                                        [
+                                            keypoint_classifier_labels[hand_sign_id],
+                                            hand_sign_confidence,
+                                        ],
+                                    ],
                                 )
 
                                 # if current_gesture[1][1] == hand_sign_confidence then it is a new gesture,
@@ -266,7 +317,10 @@ def collect_poll_results():
                                 if current_gesture[1][1] < hand_sign_confidence:
                                     best_gestures[f"person{i}_gesture{j}"] = [
                                         debug_image,
-                                        [keypoint_classifier_labels[hand_sign_id], hand_sign_confidence],
+                                        [
+                                            keypoint_classifier_labels[hand_sign_id],
+                                            hand_sign_confidence,
+                                        ],
                                     ]
 
             for key, value in best_gestures.items():
