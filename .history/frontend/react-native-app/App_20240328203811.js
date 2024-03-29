@@ -9,14 +9,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Gesture Recognition Software v0.1</Text>
-      <View style={styles.infoBox}>
-        <Text style={styles.infoText}>Current Models</Text>
-        <Text style={styles.infoText}>MediaPipe, YOLO_NAS, Tensorflow</Text>
-        <Text style={styles.infoText}>Current Features</Text>
-        <Text style={styles.infoText}>................</Text>
-        <Text style={styles.infoText}>................</Text>
-      </View>
+      <Text style={styles.title}>My App Title</Text>
       <View style={styles.content}>
         <View style={styles.row}>
           <TouchableOpacity style={styles.box} onPress={() => handleOptionClick(1)}>
@@ -34,14 +27,6 @@ export default function App() {
             <Text style={styles.text}>Option 4</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.box} onPress={() => handleOptionClick(3)}>
-            <Text style={styles.text}>Option 5</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.box} onPress={() => handleOptionClick(4)}>
-            <Text style={styles.text}>Option 6</Text>
-          </TouchableOpacity>
-        </View>
       </View>
       <StatusBar style="auto" />
     </View>
@@ -54,25 +39,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
-    fontSize: 12,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginTop: 7,
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  infoBox: {
-    alignItems: 'center',
+    marginTop: 20,
     marginBottom: 20,
-  },
-  infoText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000000',
+    textAlign: 'center',
   },
   content: {
     flex: 1,
     alignItems: 'center',
-    //justifyContent: 'center',
+    justifyContent: 'center',
   },
   row: {
     flexDirection: 'row',
