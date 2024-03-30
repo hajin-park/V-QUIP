@@ -15,7 +15,7 @@ export default function App() {
         <Text style={styles.infoText}>MediaPipe, YOLO_NAS, Tensorflow</Text>
         <Text style={styles.infoText}>Current Features</Text>
         <Text style={styles.infoText}>................</Text>
-        <Text style={styles.infoText}>................</Text>
+        <Text style={styles.infoText}>Working System</Text>
       </View>
       <View style={styles.content}>
         <View style={styles.row}>

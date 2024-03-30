@@ -9,13 +9,13 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Gesture Recognition Software v0.1</Text>
+      <Text style={styles.title}>V-QUIP Gesture Recognition Software v0.0.1</Text>
       <View style={styles.infoBox}>
-        <Text style={styles.infoText}>Current Models</Text>
-        <Text style={styles.infoText}>MediaPipe, YOLO_NAS, Tensorflow</Text>
-        <Text style={styles.infoText}>Current Features</Text>
-        <Text style={styles.infoText}>................</Text>
-        <Text style={styles.infoText}>................</Text>
+        <Text style={styles.infoText}>Current PipeLine:</Text>
+        <Text style={styles.infoText}>MediaPipe</Text>
+        <Text style={styles.infoText}>Background</Text>
+        <Text style={styles.infoText}>Running App</Text>
+        <Text style={styles.infoText}>Current PipeLine:</Text>
       </View>
       <View style={styles.content}>
         <View style={styles.row}>
@@ -34,14 +34,6 @@ export default function App() {
             <Text style={styles.text}>Option 4</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.box} onPress={() => handleOptionClick(3)}>
-            <Text style={styles.text}>Option 5</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.box} onPress={() => handleOptionClick(4)}>
-            <Text style={styles.text}>Option 6</Text>
-          </TouchableOpacity>
-        </View>
       </View>
       <StatusBar style="auto" />
     </View>
@@ -56,7 +48,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 12,
     fontWeight: 'bold',
-    marginTop: 7,
+    marginTop: 20,
     marginBottom: 10,
     textAlign: 'center',
   },
@@ -72,7 +64,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     alignItems: 'center',
-    //justifyContent: 'center',
+    justifyContent: 'center',
   },
   row: {
     flexDirection: 'row',
