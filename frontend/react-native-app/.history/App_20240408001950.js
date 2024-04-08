@@ -1,38 +1,30 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity, Switch, Modal, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Switch } from 'react-native';
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState('');
 
   const handleOptionClick = (option) => {
-    if (option === 'About') {
-      setModalContent('Gesture-Recognition-v0.2\n---------------------Purpose---------------------\nEducational Polling Software\n---------------Current-Models----------------\nMediaPipe-YOLO_NAS-TensorFlow\n--------------------Features---------------------\n----------------Head-of-Project---------------\n Professor-Santosh-Chandrasekhar\n-------------------Developers-------------------\nAditya--Arvind--Hajin\n--------------------------------------------------------');
-      setModalVisible(true);
-    } else if (option === 'Settings') {
-      setModalContent('Here are the settings...');
-      setModalVisible(true);
-    } else {
-      // Handle click event for other options
-      console.log(`Function ${option} clicked`);
-    }
+    // Handle click event for the selected option
+    console.log(`Function ${option} clicked`);
   };
 
   return (
     <View style={[styles.container, darkMode && styles.darkContainer]}>
-      <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.2</Text>
+      <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.1</Text>
       <View style={styles.infoBox}>
-        <Text style={[styles.infoText, darkMode && styles.darkText]}>React & Python</Text>
-        <Text style={[styles.infoText, darkMode && styles.darkText]}>UC Merced</Text>
+        <Text style={[styles.infoText, darkMode && styles.darkText]}>Current Models</Text>
+        <Text style={[styles.infoText, darkMode && styles.darkText]}>MediaPipe, YOLO_NAS, Tensorflow</Text>
+        <Text style={[styles.infoText, darkMode && styles.darkText]}>Current Features</Text>
+        </View>    
       </View>
+      <View style={[styles.container, darkMode && styles.darkContainer]}>
       <View style={styles.row}>
-        <TouchableOpacity style={[styles.box3, darkMode && styles.darkBox]} onPress={() => handleOptionClick('About')}>
-          <Text style={[styles.text, darkMode && styles.darkText]}>About this App</Text>
-        </TouchableOpacity>
-      </View>
-      <Text style={[styles.infoText, darkMode && styles.darkText]}></Text>
+          <TouchableOpacity style={[styles.box3, darkMode && styles.darkBox]} onPress={() => handleOptionClick(6)}>
+            <Text style={[styles.text, darkMode && styles.darkText]}>About this App</Text>
+          </TouchableOpacity>
+        </View>
       <View style={styles.content}>
         <View style={styles.row}>
           <TouchableOpacity style={[styles.box, darkMode && styles.darkBox]} onPress={() => handleOptionClick(1)}>
@@ -58,33 +50,15 @@ export default function App() {
             <Text style={[styles.text, darkMode && styles.darkText]}>Function 6</Text>
           </TouchableOpacity>
         </View>
-        <Text style={[styles.infoText, darkMode && styles.darkText]}></Text>
-
         <View style={styles.row}>
-          <TouchableOpacity style={[styles.box2, darkMode && styles.darkBox]} onPress={() => handleOptionClick('Settings')}>
+          <TouchableOpacity style={[styles.box2, darkMode && styles.darkBox]} onPress={() => handleOptionClick(5)}>
             <Text style={[styles.text, darkMode && styles.darkText]}>Settings</Text>
           </TouchableOpacity>   
-        </View>
       </View>
-      {/* Modal for About/Settings */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={[styles.modalContent, darkMode && styles.darkBox]}>
-            <Text style={[styles.modalText, darkMode && styles.darkText]}>{modalContent}</Text>
-            <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.modalButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
+      </View>
+      {/* Settings and About This App boxes */}
       
-      {/* Dark Mode Switch */}
+      
       <View style={styles.darkModeSwitchContainer}>
         <Text style={[styles.darkModeText, darkMode && styles.darkText]}>Dark Mode</Text>
         <Switch
@@ -157,7 +131,7 @@ const styles = StyleSheet.create({
   },
   box3: {
     width: 330,
-    height: 80,
+    height: 100,
     backgroundColor: '#ABDFA9', // Light blue color
     borderRadius: 10, // Rounded edges
     alignItems: 'center',
@@ -172,34 +146,18 @@ const styles = StyleSheet.create({
   darkBox: {
     backgroundColor: '#2d2d2d', // Dark gray color
   },
-  modalContainer: {
-    flex: 1,
+  horizontalContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  horizontalBox: {
+    width: '70%',
+    height: 80,
+    backgroundColor: '#ADD8E6', // Light blue color
+    borderRadius: 10, // Rounded edges
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-  },
-  modalContent: {
-    width: 330,
-    height: 330,
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-  },
-  modalText: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  modalButton: {
-    backgroundColor: '#2196F3',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  modalButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
   },
   darkModeSwitchContainer: {
     flexDirection: 'row',

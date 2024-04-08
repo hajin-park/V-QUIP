@@ -9,7 +9,7 @@ export default function App() {
 
   const handleOptionClick = (option) => {
     if (option === 'About') {
-      setModalContent('Gesture-Recognition-v0.2\n---------------------Purpose---------------------\nEducational Polling Software\n---------------Current-Models----------------\nMediaPipe-YOLO_NAS-TensorFlow\n--------------------Features---------------------\n----------------Head-of-Project---------------\n Professor-Santosh-Chandrasekhar\n-------------------Developers-------------------\nAditya--Arvind--Hajin\n--------------------------------------------------------');
+      setModalContent('---------------Current Models----------------\nMediaPipe, YOLO_NAS, TensorFlow\n\n\n\n\n\n----------------Head of Project---------------\n Professor Santosh Chandrasekhar\n-------------------Developers-------------------\nAditya, Arvind, Hajin\n--------------------------------------------------------');
       setModalVisible(true);
     } else if (option === 'Settings') {
       setModalContent('Here are the settings...');
@@ -22,7 +22,7 @@ export default function App() {
 
   return (
     <View style={[styles.container, darkMode && styles.darkContainer]}>
-      <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.2</Text>
+      <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.1</Text>
       <View style={styles.infoBox}>
         <Text style={[styles.infoText, darkMode && styles.darkText]}>React & Python</Text>
         <Text style={[styles.infoText, darkMode && styles.darkText]}>UC Merced</Text>
@@ -83,7 +83,31 @@ export default function App() {
         </View>
       </Modal>
 
-      
+      // Inside the modal content
+      <Text style={[styles.modalText, darkMode && styles.darkText]}>Here are the settings...</Text>
+      <View style={styles.sliderContainer}>
+        <Text style={[styles.sliderText, darkMode && styles.darkText]}>Dark Mode</Text>
+        <Switch
+          trackColor={{ false: "#767577", true: "#81b0ff" }}
+          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={() => setDarkMode(!darkMode)}
+          value={darkMode}
+        />
+      </View>
+      <View style={styles.sliderContainer}>
+        <Text style={[styles.sliderText, darkMode && styles.darkText]}>Brightness</Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={100}
+          minimumTrackTintColor="#FFFFFF"
+          maximumTrackTintColor="#000000"
+          thumbTintColor="#FFFFFF"
+          value={brightnessValue}
+          onValueChange={(value) => setBrightnessValue(value)} // Update brightness value on slider change
+        />
+      </View>
       {/* Dark Mode Switch */}
       <View style={styles.darkModeSwitchContainer}>
         <Text style={[styles.darkModeText, darkMode && styles.darkText]}>Dark Mode</Text>

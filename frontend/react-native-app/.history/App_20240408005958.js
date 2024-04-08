@@ -9,7 +9,7 @@ export default function App() {
 
   const handleOptionClick = (option) => {
     if (option === 'About') {
-      setModalContent('Gesture-Recognition-v0.2\n---------------------Purpose---------------------\nEducational Polling Software\n---------------Current-Models----------------\nMediaPipe-YOLO_NAS-TensorFlow\n--------------------Features---------------------\n----------------Head-of-Project---------------\n Professor-Santosh-Chandrasekhar\n-------------------Developers-------------------\nAditya--Arvind--Hajin\n--------------------------------------------------------');
+      setModalContent('---------------Current Models----------------\nMediaPipe, YOLO_NAS, TensorFlow\n\n\n\n\n\n----------------Head of Project---------------\n Professor Santosh Chandrasekhar\n-------------------Developers-------------------\nAditya, Arvind, Hajin\n--------------------------------------------------------');
       setModalVisible(true);
     } else if (option === 'Settings') {
       setModalContent('Here are the settings...');
@@ -22,7 +22,7 @@ export default function App() {
 
   return (
     <View style={[styles.container, darkMode && styles.darkContainer]}>
-      <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.2</Text>
+      <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.1</Text>
       <View style={styles.infoBox}>
         <Text style={[styles.infoText, darkMode && styles.darkText]}>React & Python</Text>
         <Text style={[styles.infoText, darkMode && styles.darkText]}>UC Merced</Text>
@@ -83,20 +83,20 @@ export default function App() {
         </View>
       </Modal>
 
-      
       {/* Dark Mode Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>Dark Mode</Text>
+      <View style={styles.row}>
+      <TouchableOpacity style={[styles.box2, darkMode && styles.darkBox]} onPress={() => {}}>
+        <Text style={[styles.text, darkMode && styles.darkText]}>Settings</Text>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
           thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
           ios_backgroundColor="#3e3e3e"
-          onValueChange={() => setDarkMode(!darkMode)}
-          value={darkMode}
+          onValueChange={() => setModalVisible(!modalVisible)}
+          value={modalVisible}
         />
-      </View>
-      <StatusBar style="auto" />
-    </View>
+      </TouchableOpacity>
+</View>
+
   );
 }
 

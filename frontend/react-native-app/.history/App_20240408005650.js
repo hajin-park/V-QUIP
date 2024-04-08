@@ -9,7 +9,7 @@ export default function App() {
 
   const handleOptionClick = (option) => {
     if (option === 'About') {
-      setModalContent('Gesture-Recognition-v0.2\n---------------------Purpose---------------------\nEducational Polling Software\n---------------Current-Models----------------\nMediaPipe-YOLO_NAS-TensorFlow\n--------------------Features---------------------\n----------------Head-of-Project---------------\n Professor-Santosh-Chandrasekhar\n-------------------Developers-------------------\nAditya--Arvind--Hajin\n--------------------------------------------------------');
+      setModalContent('---------------Current Models----------------\nMediaPipe, YOLO_NAS, TensorFlow\n\n\n\n----------------Head of Project---------------\n Professor Santosh Chandrasekhar\n\n\n-------------------Developers-------------------\nAditya, Arvind, Hajin\n------------------------------------------------------------------------------------');
       setModalVisible(true);
     } else if (option === 'Settings') {
       setModalContent('Here are the settings...');
@@ -22,7 +22,7 @@ export default function App() {
 
   return (
     <View style={[styles.container, darkMode && styles.darkContainer]}>
-      <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.2</Text>
+      <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.1</Text>
       <View style={styles.infoBox}>
         <Text style={[styles.infoText, darkMode && styles.darkText]}>React & Python</Text>
         <Text style={[styles.infoText, darkMode && styles.darkText]}>UC Merced</Text>
@@ -83,7 +83,6 @@ export default function App() {
         </View>
       </Modal>
 
-      
       {/* Dark Mode Switch */}
       <View style={styles.darkModeSwitchContainer}>
         <Text style={[styles.darkModeText, darkMode && styles.darkText]}>Dark Mode</Text>

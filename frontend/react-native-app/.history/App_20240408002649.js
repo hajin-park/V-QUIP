@@ -9,7 +9,7 @@ export default function App() {
 
   const handleOptionClick = (option) => {
     if (option === 'About') {
-      setModalContent('Gesture-Recognition-v0.2\n---------------------Purpose---------------------\nEducational Polling Software\n---------------Current-Models----------------\nMediaPipe-YOLO_NAS-TensorFlow\n--------------------Features---------------------\n----------------Head-of-Project---------------\n Professor-Santosh-Chandrasekhar\n-------------------Developers-------------------\nAditya--Arvind--Hajin\n--------------------------------------------------------');
+      setModalContent('This is an awesome app!');
       setModalVisible(true);
     } else if (option === 'Settings') {
       setModalContent('Here are the settings...');
@@ -22,10 +22,10 @@ export default function App() {
 
   return (
     <View style={[styles.container, darkMode && styles.darkContainer]}>
-      <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.2</Text>
+      <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.1</Text>
       <View style={styles.infoBox}>
-        <Text style={[styles.infoText, darkMode && styles.darkText]}>React & Python</Text>
-        <Text style={[styles.infoText, darkMode && styles.darkText]}>UC Merced</Text>
+        <Text style={[styles.infoText, darkMode && styles.darkText]}>Current Models</Text>
+        <Text style={[styles.infoText, darkMode && styles.darkText]}>MediaPipe, YOLO_NAS, Tensorflow</Text>
       </View>
       <View style={styles.row}>
         <TouchableOpacity style={[styles.box3, darkMode && styles.darkBox]} onPress={() => handleOptionClick('About')}>
@@ -61,7 +61,7 @@ export default function App() {
         <Text style={[styles.infoText, darkMode && styles.darkText]}></Text>
 
         <View style={styles.row}>
-          <TouchableOpacity style={[styles.box2, darkMode && styles.darkBox]} onPress={() => handleOptionClick('Settings')}>
+          <TouchableOpacity style={[styles.box2, darkMode && styles.darkBox]} onPress={() => handleOptionClick(5)}>
             <Text style={[styles.text, darkMode && styles.darkText]}>Settings</Text>
           </TouchableOpacity>   
         </View>
@@ -83,7 +83,6 @@ export default function App() {
         </View>
       </Modal>
 
-      
       {/* Dark Mode Switch */}
       <View style={styles.darkModeSwitchContainer}>
         <Text style={[styles.darkModeText, darkMode && styles.darkText]}>Dark Mode</Text>
@@ -170,44 +169,4 @@ const styles = StyleSheet.create({
     color: '#FFFFFF', // White text color
   },
   darkBox: {
-    backgroundColor: '#2d2d2d', // Dark gray color
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-  },
-  modalContent: {
-    width: 330,
-    height: 330,
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-  },
-  modalText: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  modalButton: {
-    backgroundColor: '#2196F3',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  modalButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-  },
-  darkModeSwitchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  darkModeText: {
-    marginRight: 10,
-    color: '#000000',
-  },
-});
+    backgroundColor: '#2d2d2d', // Dark gray

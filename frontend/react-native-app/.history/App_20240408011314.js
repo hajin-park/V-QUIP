@@ -9,7 +9,7 @@ export default function App() {
 
   const handleOptionClick = (option) => {
     if (option === 'About') {
-      setModalContent('Gesture-Recognition-v0.2\n---------------------Purpose---------------------\nEducational Polling Software\n---------------Current-Models----------------\nMediaPipe-YOLO_NAS-TensorFlow\n--------------------Features---------------------\n----------------Head-of-Project---------------\n Professor-Santosh-Chandrasekhar\n-------------------Developers-------------------\nAditya--Arvind--Hajin\n--------------------------------------------------------');
+      setModalContent('-Gesture-Recognition-Software-v0.2-\n\n---------------Current-Models----------------\nMediaPipe-YOLO_NAS-TensorFlow\n\n\n\n----------------Head-of-Project---------------\n Professor-Santosh-Chandrasekhar\n-------------------Developers-------------------\nAditya--Arvind--Hajin\n--------------------------------------------------------');
       setModalVisible(true);
     } else if (option === 'Settings') {
       setModalContent('Here are the settings...');
