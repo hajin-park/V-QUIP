@@ -1,22 +1,63 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity, Switch, Modal, TextInput } from 'react-native';
+import { Slider } from '@react-native-community/slider';
+import { StyleSheet, Text, View, TouchableOpacity, Switch, Modal } from 'react-native';
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState('');
+  const [modalContent, setModalContent] = useState(null);
+  const [slider1Value, setSlider1Value] = useState(0);
+  const [slider2Value, setSlider2Value] = useState(0);
+  const [slider3Value, setSlider3Value] = useState(0);
+  const [slider4Value, setSlider4Value] = useState(0);
 
   const handleOptionClick = (option) => {
     if (option === 'About') {
-      setModalContent('Gesture-Recognition-v0.2\n---------------------Purpose---------------------\nEducational Polling Software\n---------------Current-Models----------------\nMediaPipe-YOLO_NAS-TensorFlow\n--------------------Features---------------------\n----------------Head-of-Project---------------\n Professor-Santosh-Chandrasekhar\n-------------------Developers-------------------\nAditya--Arvind--Hajin\n--------------------------------------------------------');
+      setModalContent('Gesture Recognition Software v.2\n---------------------Purpose-------------------\nEducational Polling Software\n---------------Current Models----------------\nMediaPipe, YOLO_NAS, TensorFlow\n--------------------Features---------------------\n----------------Head of Project---------------\n Professor Santosh Chandrasekhar\n-------------------Developers-------------------\nAditya, Arvind, Hajin\n--------------------------------------------------------');
       setModalVisible(true);
     } else if (option === 'Settings') {
-      setModalContent('Here are the settings...');
+      setModalContent(
+        <View>
+          <Text style={styles.modalText}>Slider 1: {slider1Value}</Text>
+          <Slider
+            style={{ width: 200, height: 40 }}
+            minimumValue={0}
+            maximumValue={100}
+            minimumTrackTintColor="#FFFFFF"
+            maximumTrackTintColor="#000000"
+            onValueChange={(value) => setSlider1Value(value)}
+          />
+          <Text style={styles.modalText}>Slider 2: {slider2Value}</Text>
+          <Slider
+            style={{ width: 200, height: 40 }}
+            minimumValue={0}
+            maximumValue={100}
+            minimumTrackTintColor="#FFFFFF"
+            maximumTrackTintColor="#000000"
+            onValueChange={(value) => setSlider2Value(value)}
+          />
+          <Text style={styles.modalText}>Slider 3: {slider3Value}</Text>
+          <Slider
+            style={{ width: 200, height: 40 }}
+            minimumValue={0}
+            maximumValue={100}
+            minimumTrackTintColor="#FFFFFF"
+            maximumTrackTintColor="#000000"
+            onValueChange={(value) => setSlider3Value(value)}
+          />
+          <Text style={styles.modalText}>Slider 4: {slider4Value}</Text>
+          <Slider
+            style={{ width: 200, height: 40 }}
+            minimumValue={0}
+            maximumValue={100}
+            minimumTrackTintColor="#FFFFFF"
+            maximumTrackTintColor="#000000"
+            onValueChange={(value) => setSlider4Value(value)}
+          />
+        </View>
+      );
       setModalVisible(true);
-    } else {
-      // Handle click event for other options
-      console.log(`Function ${option} clicked`);
     }
   };
 
@@ -28,43 +69,37 @@ export default function App() {
         <Text style={[styles.infoText, darkMode && styles.darkText]}>UC Merced</Text>
       </View>
       <View style={styles.row}>
-        <TouchableOpacity style={[styles.box3, darkMode && styles.darkBox]} onPress={() => handleOptionClick('About')}>
+        <TouchableOpacity style={[styles.box, styles.boxAbout, darkMode && styles.darkBox]} onPress={() => handleOptionClick('About')}>
           <Text style={[styles.text, darkMode && styles.darkText]}>About this App</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={[styles.box, styles.boxSettings, darkMode && styles.darkBox]} onPress={() => handleOptionClick('Settings')}>
+          <Text style={[styles.text, darkMode && styles.darkText]}>Settings</Text>
+        </TouchableOpacity>
       </View>
-      <Text style={[styles.infoText, darkMode && styles.darkText]}></Text>
-      <View style={styles.content}>
-        <View style={styles.row}>
-          <TouchableOpacity style={[styles.box, darkMode && styles.darkBox]} onPress={() => handleOptionClick(1)}>
-            <Text style={[styles.text, darkMode && styles.darkText]}>Function 1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.box, darkMode && styles.darkBox]} onPress={() => handleOptionClick(2)}>
-            <Text style={[styles.text, darkMode && styles.darkText]}>Function 2</Text>
-          </TouchableOpacity>
+      <View style={styles.box2}>
+        <Text style={[styles.infoText, darkMode && styles.darkText]}>Graph</Text>
+      </View>
+      
+      <View style={styles.boxsp}>
+        <View style={styles.gridContainer}>
+          <View style={styles.gridItem}>
+            <Text style={styles.gridText}>LHC:</Text>
+          </View>
+          <View style={styles.gridItem}>
+            <Text style={styles.gridText}>RHC:</Text>
+          </View>
+          <View style={styles.gridItem}>
+            <Text style={styles.gridText}>BLHC:</Text>
+          </View>
+          <View style={styles.gridItem}>
+            <Text style={styles.gridText}>BRHC:</Text>
+          </View>
         </View>
-        <View style={styles.row}>
-          <TouchableOpacity style={[styles.box, darkMode && styles.darkBox]} onPress={() => handleOptionClick(3)}>
-            <Text style={[styles.text, darkMode && styles.darkText]}>Function 3</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.box, darkMode && styles.darkBox]} onPress={() => handleOptionClick(4)}>
-            <Text style={[styles.text, darkMode && styles.darkText]}>Function 4</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.row}>
-          <TouchableOpacity style={[styles.box, darkMode && styles.darkBox]} onPress={() => handleOptionClick(5)}>
-            <Text style={[styles.text, darkMode && styles.darkText]}>Function 5</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.box, darkMode && styles.darkBox]} onPress={() => handleOptionClick(6)}>
-            <Text style={[styles.text, darkMode && styles.darkText]}>Function 6</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={[styles.infoText, darkMode && styles.darkText]}></Text>
+      </View>
 
-        <View style={styles.row}>
-          <TouchableOpacity style={[styles.box2, darkMode && styles.darkBox]} onPress={() => handleOptionClick('Settings')}>
-            <Text style={[styles.text, darkMode && styles.darkText]}>Settings</Text>
-          </TouchableOpacity>   
-        </View>
+
+      <View style={styles.content}>
+        <Text style={[styles.infoText, darkMode && styles.darkText]}>UC Merced</Text>
       </View>
       {/* Modal for About/Settings */}
       <Modal
@@ -82,8 +117,6 @@ export default function App() {
           </View>
         </View>
       </Modal>
-
-      
       {/* Dark Mode Switch */}
       <View style={styles.darkModeSwitchContainer}>
         <Text style={[styles.darkModeText, darkMode && styles.darkText]}>Dark Mode</Text>
@@ -138,31 +171,29 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   box: {
-    width: 160,
+    flex: 1,
     height: 100,
     backgroundColor: '#ADD8E6', // Light blue color
     borderRadius: 10, // Rounded edges
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 5,
+    marginBottom: 10,
   },
   box2: {
-    width: 330,
-    height: 100,
-    backgroundColor: '#8e8e8e', // Light blue color
+    height: 350,
+    backgroundColor: '#ADD8E6', // Light blue color
     borderRadius: 10, // Rounded edges
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 10,
+    marginHorizontal: 5,
+    marginBottom: 10,
   },
-  box3: {
-    width: 330,
-    height: 80,
-    backgroundColor: '#ABDFA9', // Light blue color
-    borderRadius: 10, // Rounded edges
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 20,
+  boxAbout: {
+    backgroundColor: '#880000', // Light red color
+  },
+  boxSettings: {
+    backgroundColor: '#444444', // Light gray color
   },
   text: {
     fontSize: 20,
@@ -179,8 +210,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
   },
   modalContent: {
-    width: 330,
-    height: 330,
+    width: '80%',
     backgroundColor: '#ffffff',
     borderRadius: 10,
     padding: 20,
@@ -208,6 +238,49 @@ const styles = StyleSheet.create({
   },
   darkModeText: {
     marginRight: 10,
+    color: '#000000',
+  },
+  containersp: {
+    flex: 1,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    padding: 20,
+  },
+  boxsp: {
+    backgroundColor: '#ADDAFF', // Light blue color
+    width: '100%',
+    height: 100,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderWidth: 0,
+    borderColor: '#000000',
+  },
+  boxTextsp: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  gridItem: {
+    width: '50%',
+    height: '50%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gridText: {
+    fontSize: 18,
+    fontWeight: 'bold',
     color: '#000000',
   },
 });
