@@ -1,0 +1,254 @@
+import React, { useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, TouchableOpacity, Switch, Modal } from 'react-native';
+import { Slider } from '@react-native-community/slider';
+
+const AboutModalContent = () => {
+  return (
+    <View>
+      <Text style={styles.modalText}>Gesture Recognition Software v.21</Text>
+      <Text style={styles.modalText}>---------------------Purpose-------------------</Text>
+      <Text style={styles.modalText}>Educational Polling Software</Text>
+      <Text style={styles.modalText}>---------------Current Models----------------</Text>
+      <Text style={styles.modalText}>MediaPipe, YOLO_NAS, TensorFlow</Text>
+      <Text style={styles.modalText}>--------------------Features---------------------</Text>
+      <Text style={styles.modalText}>----------------Head of Project---------------</Text>
+      <Text style={styles.modalText}>Professor Santosh Chandrasekhar</Text>
+      <Text style={styles.modalText}>-------------------Developers-------------------</Text>
+      <Text style={styles.modalText}>Aditya, Arvind, Hajin</Text>
+    </View>
+  );
+};
+
+const SettingsModalContent = ({ slider1Value, slider2Value, slider3Value, slider4Value, setSlider1Value, setSlider2Value, setSlider3Value, setSlider4Value }) => {
+  return (
+    <View>
+      <Text style={styles.modalText}>Slider 1: {slider1Value}</Text>
+      <Slider
+        style={{ width: 200, height: 40 }}
+        minimumValue={0}
+        maximumValue={100}
+        minimumTrackTintColor="#FFFFFF"
+        maximumTrackTintColor="#000000"
+        onValueChange={(value) => setSlider1Value(value)}
+      />
+      {/* Other sliders */}
+    </View>
+  );
+};
+
+export default function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [aboutModalVisible, setAboutModalVisible] = useState(false);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [slider1Value, setSlider1Value] = useState(0);
+  // Define other slider values and setters as needed
+
+  const openAboutModal = () => {
+    setAboutModalVisible(true);
+  };
+
+  const openSettingsModal = () => {
+    setSettingsModalVisible(true);
+  };
+
+  return (
+    <View style={[styles.container, darkMode && styles.darkContainer]}>
+      <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.2</Text>
+      {/* Other components */}
+      <TouchableOpacity style={[styles.box, styles.boxAbout, darkMode && styles.darkBox]} onPress={openAboutModal}>
+        <Text style={[styles.text, darkMode && styles.darkText]}>About this App</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.box, styles.boxSettings, darkMode && styles.darkBox]} onPress={openSettingsModal}>
+        <Text style={[styles.text, darkMode && styles.darkText]}>Settings</Text>
+      </TouchableOpacity>
+      {/* About Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={aboutModalVisible}
+        onRequestClose={() => setAboutModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={[styles.modalContent, darkMode && styles.darkBox]}>
+            <AboutModalContent />
+            <TouchableOpacity style={styles.modalButton} onPress={() => setAboutModalVisible(false)}>
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      {/* Settings Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={settingsModalVisible}
+        onRequestClose={() => setSettingsModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={[styles.modalContent, darkMode && styles.darkBox]}>
+            <SettingsModalContent
+              slider1Value={slider1Value}
+              setSlider1Value={setSlider1Value}
+              // Pass other props as needed
+            />
+            <TouchableOpacity style={styles.modalButton} onPress={() => setSettingsModalVisible(false)}>
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      {/* Dark Mode Switch */}
+      <View style={styles.darkModeSwitchContainer}>
+        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>Dark Mode</Text>
+        <Switch
+          trackColor={{ false: "#767577", true: "#81b0ff" }}
+          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={() => setDarkMode(!darkMode)}
+          value={darkMode}
+        />
+      </View>
+      <StatusBar style="auto" />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 10,
+    paddingTop: 20,
+  },
+  darkContainer: {
+    backgroundColor: '#121212',
+  },
+  title: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  darkText: {
+    color: '#ffffff',
+  },
+  infoBox: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  infoText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  content: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  box: {
+    flex: 1,
+    height: 100,
+    backgroundColor: '#ADD8E6', // Light blue color
+    borderRadius: 10, // Rounded edges
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 5,
+    marginBottom: 10,
+  },
+  box2: {
+    height: 350,
+    backgroundColor: '#ADD8E6', // Light blue color
+    borderRadius: 10, // Rounded edges
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 5,
+    marginBottom: 10,
+  },
+  boxAbout: {
+    backgroundColor: '#880000', // Light red color
+  },
+  boxSettings: {
+    backgroundColor: '#444444', // Light gray color
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF', // White text color
+  },
+  darkBox: {
+    backgroundColor: '#2d2d2d', // Dark gray color
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalButton: {
+    backgroundColor: '#2196F3',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  modalButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+  },
+  darkModeSwitchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  darkModeText: {
+    marginRight: 10,
+    color: '#000000',
+  },
+  boxsp: {
+    backgroundColor: '#ADDAFF', // Light blue color
+    width: '100%',
+    height: 100,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderWidth: 0,
+    borderColor: '#000000',
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  gridItem: {
+    width: '50%',
+    height: '50%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gridText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+});

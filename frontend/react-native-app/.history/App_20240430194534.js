@@ -22,10 +22,10 @@ const SettingsModalContent = ({ darkMode, setDarkMode }) => {
           value={darkMode}
         />
       </View>
-      {/* Some Switch */}
+      {/* Dark Mode Switch */}
       <View style={styles.darkModeSwitchContainer}>
         <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
+          Dark Mode
         </Text>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -33,13 +33,12 @@ const SettingsModalContent = ({ darkMode, setDarkMode }) => {
           ios_backgroundColor="#3e3e3e"
           onValueChange={toggleDarkMode}
           value={darkMode}
-          disabled
         />
       </View>
-      {/* Some Switch */}
+      {/* Dark Mode Switch */}
       <View style={styles.darkModeSwitchContainer}>
         <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
+          Dark Mode
         </Text>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -47,13 +46,12 @@ const SettingsModalContent = ({ darkMode, setDarkMode }) => {
           ios_backgroundColor="#3e3e3e"
           onValueChange={toggleDarkMode}
           value={darkMode}
-          disabled
         />
       </View>
-      {/* Some Switch */}
+      {/* Dark Mode Switch */}
       <View style={styles.darkModeSwitchContainer}>
         <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
+          Dark Mode
         </Text>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -61,13 +59,12 @@ const SettingsModalContent = ({ darkMode, setDarkMode }) => {
           ios_backgroundColor="#3e3e3e"
           onValueChange={toggleDarkMode}
           value={darkMode}
-          disabled
         />
       </View>
-      {/* Some Switch */}
+      {/* Dark Mode Switch */}
       <View style={styles.darkModeSwitchContainer}>
         <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
+          Dark Mode
         </Text>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -75,7 +72,6 @@ const SettingsModalContent = ({ darkMode, setDarkMode }) => {
           ios_backgroundColor="#3e3e3e"
           onValueChange={toggleDarkMode}
           value={darkMode}
-          disabled
         />
       </View>
     </View>

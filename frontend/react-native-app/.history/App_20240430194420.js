@@ -22,62 +22,6 @@ const SettingsModalContent = ({ darkMode, setDarkMode }) => {
           value={darkMode}
         />
       </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
     </View>
   );
 };
@@ -100,6 +44,9 @@ export default function App() {
       setModalVisible(true);
     }
   };
+  useEffect(() => {
+    setModalContent(<SettingsModalContent darkMode={darkMode} setDarkMode={setDarkMode} />);
+  }, [darkMode]);
 
   return (
     <View style={[styles.container, darkMode && styles.darkContainer]}>

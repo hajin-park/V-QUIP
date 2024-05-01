@@ -1,106 +1,66 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity, Switch, Modal } from 'react-native';
+import { Slider } from '@react-native-community/slider';
 
-const SettingsModalContent = ({ darkMode, setDarkMode }) => {
-  const toggleDarkMode = () => {
-    setDarkMode((prevDarkMode) => !prevDarkMode);
-  };
-
+const SettingsModalContent = ({ slider1Value, slider2Value, slider3Value, slider4Value, setSlider1Value, setSlider2Value, setSlider3Value, setSlider4Value }) => {
   return (
     <View>
-      {/* Dark Mode Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Dark Mode
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
+      <Text style={styles.modalText}>Slider 1: {slider1Value}</Text>
+      <Slider
+        style={{ width: 200, height: 40 }}
+        minimumValue={0}
+        maximumValue={100}
+        minimumTrackTintColor="#FFFFFF"
+        maximumTrackTintColor="#000000"
+        onValueChange={(value) => setSlider1Value(value)}
+      />
+      <Text style={styles.modalText}>Slider 2: {slider2Value}</Text>
+      <Slider
+        style={{ width: 200, height: 40 }}
+        minimumValue={0}
+        maximumValue={100}
+        minimumTrackTintColor="#FFFFFF"
+        maximumTrackTintColor="#000000"
+        onValueChange={(value) => setSlider2Value(value)}
+      />
+      <Text style={styles.modalText}>Slider 3: {slider3Value}</Text>
+      <Slider
+        style={{ width: 200, height: 40 }}
+        minimumValue={0}
+        maximumValue={100}
+        minimumTrackTintColor="#FFFFFF"
+        maximumTrackTintColor="#000000"
+        onValueChange={(value) => setSlider3Value(value)}
+      />
+      <Text style={styles.modalText}>Slider 4: {slider4Value}</Text>
+      <Slider
+        style={{ width: 200, height: 40 }}
+        minimumValue={0}
+        maximumValue={100}
+        minimumTrackTintColor="#FFFFFF"
+        maximumTrackTintColor="#000000"
+        onValueChange={(value) => setSlider4Value(value)}
+      />
     </View>
   );
 };
 
-
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState(false, true);
 
   const handleOptionClick = (option) => {
     if (option === 'About') {
       setModalContent('Gesture Recognition Software v.21\n---------------------Purpose-------------------\nEducational Polling Software\n---------------Current Models----------------\nMediaPipe, YOLO_NAS, TensorFlow\n--------------------Features---------------------\n----------------Head of Project---------------\n Professor Santosh Chandrasekhar\n-------------------Developers-------------------\nAditya, Arvind, Hajin\n--------------------------------------------------------');
       setModalVisible(true);
-    }
-    else if (option === 'Settings'){
+    } else if (option === 'Settings') {
       setModalContent(
-        <SettingsModalContent darkMode={darkMode} setDarkMode={setDarkMode} />
+        
       );
       setModalVisible(true);
     }
   };
-
   return (
     <View style={[styles.container, darkMode && styles.darkContainer]}>
       <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.2</Text>
@@ -157,6 +117,17 @@ export default function App() {
           </View>
         </View>
       </Modal>
+      {/* Dark Mode Switch */}
+      <View style={styles.darkModeSwitchContainer}>
+        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>Dark Mode</Text>
+        <Switch
+          trackColor={{ false: "#767577", true: "#81b0ff" }}
+          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={() => setDarkMode(!darkMode)}
+          value={darkMode}
+        />
+      </View>
       <StatusBar style="auto" />
     </View>
   );
