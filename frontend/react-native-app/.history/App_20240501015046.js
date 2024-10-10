@@ -22,6 +22,7 @@ const SettingsModalContent = ({ darkMode, setDarkMode }) => {
           value={darkMode}
         />
       </View>
+      
       {/* Some Switch */}
       <View style={styles.darkModeSwitchContainer}>
         <Text style={[styles.darkModeText, darkMode && styles.darkText]}>

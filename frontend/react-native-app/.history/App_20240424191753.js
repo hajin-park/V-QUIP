@@ -1,106 +1,37 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity, Switch, Modal } from 'react-native';
-
-const SettingsModalContent = ({ darkMode, setDarkMode }) => {
-  const toggleDarkMode = () => {
-    setDarkMode((prevDarkMode) => !prevDarkMode);
-  };
-
-  return (
-    <View>
-      {/* Dark Mode Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Dark Mode
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-    </View>
-  );
-};
-
+import SettingsModalContent from './SettingsModalContent'; // Import the component
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState(false, true);
+  const [modalContent, setModalContent] = useState(null);
+  const [slider1Value, setSlider1Value] = useState(0);
+  const [slider2Value, setSlider2Value] = useState(0);
+  const [slider3Value, setSlider3Value] = useState(0);
+  const [slider4Value, setSlider4Value] = useState(0);
 
   const handleOptionClick = (option) => {
     if (option === 'About') {
       setModalContent('Gesture Recognition Software v.21\n---------------------Purpose-------------------\nEducational Polling Software\n---------------Current Models----------------\nMediaPipe, YOLO_NAS, TensorFlow\n--------------------Features---------------------\n----------------Head of Project---------------\n Professor Santosh Chandrasekhar\n-------------------Developers-------------------\nAditya, Arvind, Hajin\n--------------------------------------------------------');
       setModalVisible(true);
-    }
-    else if (option === 'Settings'){
+    } else if (option === 'Settings') {
       setModalContent(
-        <SettingsModalContent darkMode={darkMode} setDarkMode={setDarkMode} />
+        <SettingsModalContent
+          slider1Value={slider1Value}
+          slider2Value={slider2Value}
+          slider3Value={slider3Value}
+          slider4Value={slider4Value}
+          setSlider1Value={setSlider1Value}
+          setSlider2Value={setSlider2Value}
+          setSlider3Value={setSlider3Value}
+          setSlider4Value={setSlider4Value}
+        />
       );
       setModalVisible(true);
     }
   };
-
   return (
     <View style={[styles.container, darkMode && styles.darkContainer]}>
       <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.2</Text>
@@ -157,6 +88,17 @@ export default function App() {
           </View>
         </View>
       </Modal>
+      {/* Dark Mode Switch */}
+      <View style={styles.darkModeSwitchContainer}>
+        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>Dark Mode</Text>
+        <Switch
+          trackColor={{ false: "#767577", true: "#81b0ff" }}
+          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={() => setDarkMode(!darkMode)}
+          value={darkMode}
+        />
+      </View>
       <StatusBar style="auto" />
     </View>
   );

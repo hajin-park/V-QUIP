@@ -3,79 +3,17 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity, Switch, Modal } from 'react-native';
 
 const SettingsModalContent = ({ darkMode, setDarkMode }) => {
-  const toggleDarkMode = () => {
-    setDarkMode((prevDarkMode) => !prevDarkMode);
-  };
-
   return (
     <View>
       {/* Dark Mode Switch */}
       <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Dark Mode
-        </Text>
+        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>Dark Mode</Text>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
           thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
           ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
+          onValueChange={() => setDarkMode(!darkMode)}
           value={darkMode}
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
-        />
-      </View>
-      {/* Some Switch */}
-      <View style={styles.darkModeSwitchContainer}>
-        <Text style={[styles.darkModeText, darkMode && styles.darkText]}>
-          Switch
-        </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleDarkMode}
-          value={darkMode}
-          disabled
         />
       </View>
     </View>
@@ -86,7 +24,7 @@ const SettingsModalContent = ({ darkMode, setDarkMode }) => {
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState(false, true);
+  const [modalContent, setModalContent] = useState(false);
 
   const handleOptionClick = (option) => {
     if (option === 'About') {
@@ -100,7 +38,6 @@ export default function App() {
       setModalVisible(true);
     }
   };
-
   return (
     <View style={[styles.container, darkMode && styles.darkContainer]}>
       <Text style={[styles.title, darkMode && styles.darkText]}>Gesture Recognition Software v0.2</Text>
